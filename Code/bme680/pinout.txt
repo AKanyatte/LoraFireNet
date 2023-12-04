@@ -1,0 +1,7 @@
+Pinouts:
+
+STM32 to BME680:
+- Vin to Vin
+- GND to GND
+- I2C1_SCL (PA9/CN3) to SCK
+- I2C1_SDA (PA10) to SDI
