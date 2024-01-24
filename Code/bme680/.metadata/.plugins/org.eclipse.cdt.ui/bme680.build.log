@@ -1,26 +1,26 @@
-23:52:34 **** Incremental Build of configuration Debug for project bme680 ****
+00:26:37 **** Incremental Build of configuration Debug for project bme680 ****
 make -j8 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/salma/OneDrive/Desktop/Capstone/Code/BME680_driver-master/BME680_driver-master" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
 ../Core/Src/main.c: In function 'main':
-../Core/Src/main.c:125:10: warning: unused variable 'bme_msg' [-Wunused-variable]
-  125 |     char bme_msg[] = "BME680 Initialization Error\r\n";
-      |          ^~~~~~~
 ../Core/Src/main.c:128:10: warning: unused variable 'bme_msg' [-Wunused-variable]
-  128 |     char bme_msg[] = "BME680 Initialized and Ready\r\n";
+  128 |     char bme_msg[] = "BME680 Initialization Error\r\n";
       |          ^~~~~~~
-../Core/Src/main.c:178:11: warning: implicit declaration of function 'sprintf' [-Wimplicit-function-declaration]
-  178 |           sprintf(i2c_reading_buf,
+../Core/Src/main.c:131:10: warning: unused variable 'bme_msg' [-Wunused-variable]
+  131 |     char bme_msg[] = "BME680 Initialized and Ready\r\n";
+      |          ^~~~~~~
+../Core/Src/main.c:175:11: warning: implicit declaration of function 'sprintf' [-Wimplicit-function-declaration]
+  175 |           sprintf(i2c_reading_buf,
       |           ^~~~~~~
-../Core/Src/main.c:27:1: note: include '<stdio.h>' or provide a declaration of 'sprintf'
-   26 | #include <string.h>
+../Core/Src/main.c:28:1: note: include '<stdio.h>' or provide a declaration of 'sprintf'
+   27 | #include <stdlib.h>
   +++ |+#include <stdio.h>
-   27 | 
-../Core/Src/main.c:178:11: warning: incompatible implicit declaration of built-in function 'sprintf' [-Wbuiltin-declaration-mismatch]
-  178 |           sprintf(i2c_reading_buf,
+   28 | 
+../Core/Src/main.c:175:11: warning: incompatible implicit declaration of built-in function 'sprintf' [-Wbuiltin-declaration-mismatch]
+  175 |           sprintf(i2c_reading_buf,
       |           ^~~~~~~
-../Core/Src/main.c:178:11: note: include '<stdio.h>' or provide a declaration of 'sprintf'
-../Core/Src/main.c:183:40: warning: pointer targets in passing argument 2 of 'HAL_USART_Transmit' differ in signedness [-Wpointer-sign]
-  183 |           HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
+../Core/Src/main.c:175:11: note: include '<stdio.h>' or provide a declaration of 'sprintf'
+../Core/Src/main.c:180:40: warning: pointer targets in passing argument 2 of 'HAL_USART_Transmit' differ in signedness [-Wpointer-sign]
+  180 |           HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
       |                                        ^~~~~~~~~~~~~~~
       |                                        |
       |                                        char *
@@ -31,8 +31,8 @@ In file included from ../Core/Inc/stm32l4xx_hal_conf.h:454,
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_usart.h:906:82: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'char *'
   906 | HAL_StatusTypeDef HAL_USART_Transmit(USART_HandleTypeDef *husart, const uint8_t *pTxData, uint16_t Size,
       |                                                                   ~~~~~~~~~~~~~~~^~~~~~~
-../Core/Src/main.c:191:40: warning: pointer targets in passing argument 2 of 'HAL_USART_Transmit' differ in signedness [-Wpointer-sign]
-  191 |           HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
+../Core/Src/main.c:188:40: warning: pointer targets in passing argument 2 of 'HAL_USART_Transmit' differ in signedness [-Wpointer-sign]
+  188 |           HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
       |                                        ^~~~~~~~~~~~~~~
       |                                        |
       |                                        char *
@@ -43,35 +43,17 @@ In file included from ../Core/Inc/stm32l4xx_hal_conf.h:454,
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_usart.h:906:82: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'char *'
   906 | HAL_StatusTypeDef HAL_USART_Transmit(USART_HandleTypeDef *husart, const uint8_t *pTxData, uint16_t Size,
       |                                                                   ~~~~~~~~~~~~~~~^~~~~~~
-../Core/Src/main.c: In function 'bme680I2cWrite':
-../Core/Src/main.c:414:9: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
-  414 |   buf = malloc(len + 1);
-      |         ^~~~~~
-../Core/Src/main.c:27:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
-   26 | #include <string.h>
-  +++ |+#include <stdlib.h>
-   27 | 
-../Core/Src/main.c:414:9: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
-  414 |   buf = malloc(len + 1);
-      |         ^~~~~~
-../Core/Src/main.c:414:9: note: include '<stdlib.h>' or provide a declaration of 'malloc'
-../Core/Src/main.c:424:3: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
-  424 |   free(buf);
-      |   ^~~~
-../Core/Src/main.c:424:3: note: include '<stdlib.h>' or provide a declaration of 'free'
-../Core/Src/main.c:424:3: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
-../Core/Src/main.c:424:3: note: include '<stdlib.h>' or provide a declaration of 'free'
 arm-none-eabi-gcc -o "bme680.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\salma\OneDrive\Desktop\Capstone\Code\bme680\bme680\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="bme680.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: bme680.elf
  
 arm-none-eabi-size  bme680.elf 
 arm-none-eabi-objdump -h -S bme680.elf  > "bme680.list"
    text	   data	    bss	    dec	    hex	filename
-  23704	    100	   2004	  25808	   64d0	bme680.elf
+  27532	    100	   2100	  29732	   7424	bme680.elf
 Finished building: default.size.stdout
  
 Finished building: bme680.list
  
 
-23:52:35 Build Finished. 0 errors, 10 warnings. (took 985ms)
+00:26:38 Build Finished. 0 errors, 6 warnings. (took 1s.31ms)
 
