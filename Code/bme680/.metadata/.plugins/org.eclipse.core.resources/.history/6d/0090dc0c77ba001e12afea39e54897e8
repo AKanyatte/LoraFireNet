@@ -66,11 +66,6 @@ static void MX_USART2_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 
-// BME680 Forward Declarations
-int8_t bme680I2cRead(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16_t len);
-int8_t bme680I2cWrite(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16_t len);
-
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
