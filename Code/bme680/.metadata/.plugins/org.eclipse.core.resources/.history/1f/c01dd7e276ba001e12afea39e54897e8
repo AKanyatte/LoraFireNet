@@ -31,6 +31,7 @@
 
 #define DELAY_PERIOD_MS (15*1000) // 15 seconds
 
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -53,11 +54,6 @@ USART_HandleTypeDef husart2;
 uint8_t tx_buffer[27] = "Putty is Working!\n\r";
 
 /* USER CODE END PV */
-
-// Data used during BME680 sampling
-struct bme680_dev gas_sensor;
-char i2c_reading_buf[100];
-int8_t rslt = BME680_OK;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
