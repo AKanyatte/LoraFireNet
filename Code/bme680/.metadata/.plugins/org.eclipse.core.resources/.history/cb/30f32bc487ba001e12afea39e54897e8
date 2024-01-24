@@ -32,7 +32,7 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-#define DELAY_PERIOD_MS (2*1000) // 2 seconds
+#define DELAY_PERIOD_MS (5*1000) // 15 seconds
 
 /* USER CODE END PTD */
 
@@ -191,6 +191,13 @@ int main(void)
 	  // Publish result to connected PC
 	  HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
 
+	  // Wait between samples
+	  HAL_Delay(DELAY_PERIOD_MS);
+
+
+
+
+
 	  //Test: Set GPIO Pin high
 	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
 
@@ -199,15 +206,12 @@ int main(void)
 	  HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
 	  ppm = HAL_ADC_GetValue(&hadc1);
 
-	  sprintf(msg, "%hu\r\n", ppm);
-
+	  sprintf(msg, "Air Quality: %hu\r\n", ppm);
 	  HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(ppm), HAL_MAX_DELAY);
+	  HAL_Delay(DELAY_PERIOD_MS);
 
 	  //Test: Set GPIO Pin low
 	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-
-	  // Wait between samples
-	  HAL_Delay(DELAY_PERIOD_MS);
 
 
 

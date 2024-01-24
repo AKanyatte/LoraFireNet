@@ -32,7 +32,7 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-#define DELAY_PERIOD_MS (2*1000) // 2 seconds
+#define DELAY_PERIOD_MS (5*1000) // 15 seconds
 
 /* USER CODE END PTD */
 
@@ -61,7 +61,7 @@ int8_t rslt = BME680_OK;
 //uint8_t tx_buffer[27] = "Putty is Working!\n\r";
 
 uint16_t ppm;
-char msg[50];
+char msg[20];
 
 /* USER CODE END PV */
 
@@ -169,52 +169,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  // Allow BME680 to sample environment
-	  HAL_Delay(min_sampling_period);
+    /* USER CODE END WHILE */
 
-	  // Query the sample data
-	  rslt = bme680_get_sensor_data(&data, &gas_sensor);
-
-	  // Format results into a human readable string
-	  sprintf(i2c_reading_buf,
-	    "T: %u.%u degC\r\n",
-	    (unsigned int)data.temperature / 100,
-	    (unsigned int)data.temperature % 100);
-
-	  HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
-
-	  sprintf(i2c_reading_buf,
-	    "H: %u.%u %%rH\r\n",
-	    (unsigned int)data.humidity / 1000,
-	    (unsigned int)data.humidity % 1000);
-
-	  // Publish result to connected PC
-	  HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
-
-	  //Test: Set GPIO Pin high
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-
-	  //Get ADC value
-	  HAL_ADC_Start(&hadc1);
-	  HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
-	  ppm = HAL_ADC_GetValue(&hadc1);
-
-	  sprintf(msg, "%hu\r\n", ppm);
-
-	  HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(ppm), HAL_MAX_DELAY);
-
-	  //Test: Set GPIO Pin low
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-
-	  // Wait between samples
-	  HAL_Delay(DELAY_PERIOD_MS);
-
-
-
-	  // Request the next sample
-	  if (gas_sensor.power_mode == BME680_FORCED_MODE) {
-	    rslt = bme680_set_sensor_mode(&gas_sensor);
-	  }
+    /* USER CODE BEGIN 3 */
 
   }
   /* USER CODE END 3 */
