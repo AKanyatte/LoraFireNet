@@ -128,10 +128,10 @@ int main(void)
   // Initialize the driver
   if (bme680_init(&gas_sensor) != BME680_OK) {
     char bme_msg[] = "BME680 Initialization Error\r\n";
-    //noteDebugSerialOutput(bme_msg);
+    noteDebugSerialOutput(bme_msg);
   } else {
     char bme_msg[] = "BME680 Initialized and Ready\r\n";
-    //noteDebugSerialOutput(bme_msg);
+    noteDebugSerialOutput(bme_msg);
   }
 
   // Select desired oversampling rates
