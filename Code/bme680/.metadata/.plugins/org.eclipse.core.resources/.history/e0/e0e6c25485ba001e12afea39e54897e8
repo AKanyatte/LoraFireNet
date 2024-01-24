@@ -198,8 +198,6 @@ int main(void)
 
 
 
-
-
 	  HAL_ADC_Start(&hadc1);
 
 	  //polling analog values and setting timeout to 20ms
@@ -209,8 +207,6 @@ int main(void)
 	  sprintf(msg, "Air Quality: %u. %u ppm\r\n", ppm);
 	  HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(ppm), 10);
 	  HAL_Delay(DELAY_PERIOD_MS);
-
-
 
 
 

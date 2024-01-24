@@ -61,7 +61,7 @@ int8_t rslt = BME680_OK;
 //uint8_t tx_buffer[27] = "Putty is Working!\n\r";
 
 uint16_t ppm = 0;
-char msg[20];
+char analog_read[20];
 
 /* USER CODE END PV */
 
@@ -196,31 +196,20 @@ int main(void)
 	  // Wait between samples
 	  HAL_Delay(DELAY_PERIOD_MS);
 
-
-
-
-
-	  HAL_ADC_Start(&hadc1);
-
-	  //polling analog values and setting timeout to 20ms
-	  HAL_ADC_PollForConversion(&hadc1, 20);
-	  ppm = HAL_ADC_GetValue(&hadc1);
-
-	  sprintf(msg, "Air Quality: %u. %u ppm\r\n", ppm);
-	  HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(ppm), 10);
-	  HAL_Delay(DELAY_PERIOD_MS);
-
-
-
-
-
 	  // Request the next sample
 	  if (gas_sensor.power_mode == BME680_FORCED_MODE) {
 	    rslt = bme680_set_sensor_mode(&gas_sensor);
 	  }
 
     /* USER CODE BEGIN 3 */
+	  HAL_ADC_Start(&hadc1);
 
+	  //polling analog values and setting timeout to 20ms
+	  HAL_ADC_PollForConversion(&hadc1, 20);
+	  ppm = HAL_ADC_GetValue(&hadc1);
+
+	  sprintf(analog_read, "Air Quality: %hu \r\n", ppm);
+	  HAL_USART_Transmit(&husart2, (uint8_t *)analog_read, strlen(ppm), HAL_MAX_DELAY)
   }
   /* USER CODE END 3 */
 }
