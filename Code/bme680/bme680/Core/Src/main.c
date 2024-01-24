@@ -22,6 +22,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include <bme680.h>
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
