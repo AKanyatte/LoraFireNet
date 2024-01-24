@@ -171,54 +171,6 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-	  // Allow BME680 to sample environment
-	  HAL_Delay(min_sampling_period);
-
-	  // Query the sample data
-	  rslt = bme680_get_sensor_data(&data, &gas_sensor);
-
-	  // Format results into a human readable string
-	  sprintf(i2c_reading_buf,
-	    "T: %u.%u degC\r\n",
-	    (unsigned int)data.temperature / 100,
-	    (unsigned int)data.temperature % 100);
-
-	  HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
-
-	  sprintf(i2c_reading_buf,
-	    "H: %u.%u %%rH\r\n",
-	    (unsigned int)data.humidity / 1000,
-	    (unsigned int)data.humidity % 1000);
-
-	  // Publish result to connected PC
-	  HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
-
-	  // Wait between samples
-	  HAL_Delay(DELAY_PERIOD_MS);
-
-
-
-
-
-
-	  //Get ADC value
-	  HAL_ADC_Start(&hadc1);
-	  HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
-	  ppm = HAL_ADC_GetValue(&hadc1);
-
-	  sprintf(msg, "%hu\r\n", ppm);
-	  HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(ppm), HAL_MAX_DELAY);
-	  HAL_Delay(DELAY_PERIOD_MS);
-
-
-
-
-
-	  // Request the next sample
-	  if (gas_sensor.power_mode == BME680_FORCED_MODE) {
-	    rslt = bme680_set_sensor_mode(&gas_sensor);
-	  }
-
     /* USER CODE BEGIN 3 */
 
   }
@@ -442,7 +394,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : PA8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : LD3_Pin */
   GPIO_InitStruct.Pin = LD3_Pin;

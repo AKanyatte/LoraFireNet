@@ -60,7 +60,7 @@ char i2c_reading_buf[100];
 int8_t rslt = BME680_OK;
 //uint8_t tx_buffer[27] = "Putty is Working!\n\r";
 
-uint16_t ppm;
+uint16_t ppm = 0;
 char msg[20];
 
 /* USER CODE END PV */
@@ -200,14 +200,14 @@ int main(void)
 
 
 
-
-	  //Get ADC value
 	  HAL_ADC_Start(&hadc1);
-	  HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+
+	  //polling analog values and setting timeout to 20ms
+	  HAL_ADC_PollForConversion(&hadc1, 20);
 	  ppm = HAL_ADC_GetValue(&hadc1);
 
-	  sprintf(msg, "%hu\r\n", ppm);
-	  HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(ppm), HAL_MAX_DELAY);
+	  sprintf(msg, "Air Quality: %u. %u ppm\r\n", ppm);
+	  HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(ppm), 10);
 	  HAL_Delay(DELAY_PERIOD_MS);
 
 

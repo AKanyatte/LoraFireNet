@@ -1,4 +1,4 @@
-00:46:41 **** Incremental Build of configuration Debug for project bme680 ****
+01:00:41 **** Incremental Build of configuration Debug for project bme680 ****
 make -j8 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/salma/OneDrive/Desktop/Capstone/Code/BME680_driver-master/BME680_driver-master" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
 ../Core/Src/main.c: In function 'main':
@@ -32,13 +32,8 @@ In file included from ../Core/Inc/stm32l4xx_hal_conf.h:454,
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_usart.h:906:82: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'char *'
   906 | HAL_StatusTypeDef HAL_USART_Transmit(USART_HandleTypeDef *husart, const uint8_t *pTxData, uint16_t Size,
       |                                                                   ~~~~~~~~~~~~~~~^~~~~~~
-../Core/Src/main.c:207:43: warning: format '%u' expects a matching 'unsigned int' argument [-Wformat=]
-  207 |           sprintf(msg, "Air Quality: %u. %u ppm\r\n", ppm);
-      |                                          ~^
-      |                                           |
-      |                                           unsigned int
-../Core/Src/main.c:208:63: warning: passing argument 1 of 'strlen' makes pointer from integer without a cast [-Wint-conversion]
-  208 |           HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(ppm), 10);
+../Core/Src/main.c:210:63: warning: passing argument 1 of 'strlen' makes pointer from integer without a cast [-Wint-conversion]
+  210 |           HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(ppm), HAL_MAX_DELAY);
       |                                                               ^~~
       |                                                               |
       |                                                               uint16_t {aka short unsigned int}
@@ -46,24 +41,17 @@ In file included from ../Core/Src/main.c:27:
 C:\ST\STM32CubeIDE_1.14.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.100.202309141235\tools\bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/include/string.h:41:18: note: expected 'const char *' but argument is of type 'uint16_t' {aka 'short unsigned int'}
    41 | size_t   strlen (const char *);
       |                  ^~~~~~~~~~~~
-../Core/Src/main.c:207:47: warning: ' ppm
-   ' directive writing 6 bytes into a region of size between 0 and 3 [-Wformat-overflow=]
-  207 |           sprintf(msg, "Air Quality: %u. %u ppm\r\n", ppm);
-      |                                            ~~~^~~~~
-../Core/Src/main.c:207:11: note: 'sprintf' output between 24 and 37 bytes into a destination of size 20
-  207 |           sprintf(msg, "Air Quality: %u. %u ppm\r\n", ppm);
-      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 arm-none-eabi-gcc -o "bme680.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\salma\OneDrive\Desktop\Capstone\Code\bme680\bme680\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="bme680.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: bme680.elf
  
 arm-none-eabi-size  bme680.elf 
 arm-none-eabi-objdump -h -S bme680.elf  > "bme680.list"
    text	   data	    bss	    dec	    hex	filename
-  28568	    100	   2124	  30792	   7848	bme680.elf
+  28552	    100	   2124	  30776	   7838	bme680.elf
 Finished building: default.size.stdout
  
 Finished building: bme680.list
  
 
-00:46:42 Build Finished. 0 errors, 7 warnings. (took 1s.241ms)
+01:00:43 Build Finished. 0 errors, 5 warnings. (took 1s.823ms)
 
