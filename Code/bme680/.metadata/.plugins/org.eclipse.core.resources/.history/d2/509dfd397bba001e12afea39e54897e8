@@ -23,14 +23,13 @@
 /* USER CODE BEGIN Includes */
 
 #include <bme680.h>
-#include <string.h>
 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-#define DELAY_PERIOD_MS (5*1000) // 15 seconds
+#define DELAY_PERIOD_MS (15*1000) // 15 seconds
 
 /* USER CODE END PTD */
 
@@ -85,6 +84,12 @@ int8_t bme680I2cWrite(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint1
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	HAL_StatusTypeDef ret;
+	uint8_t buf[12];
+	int16_t val;
+	float temp_c;
+	float humid_c;
+	float air_c;
 
   /* USER CODE END 1 */
 
@@ -162,6 +167,12 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
+
+
+
+
+
+
 	  // Allow BME680 to sample environment
 	  HAL_Delay(min_sampling_period);
 
@@ -170,14 +181,9 @@ int main(void)
 
 	  // Format results into a human readable string
 	  sprintf(i2c_reading_buf,
-	    "T: %u.%u degC\r\n",
+	    "T: %u.%u degC, H %u.%u %%rH\n\r",
 	    (unsigned int)data.temperature / 100,
-	    (unsigned int)data.temperature % 100);
-
-	  HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
-
-	  sprintf(i2c_reading_buf,
-	    "H: %u.%u %%rH\r\n",
+	    (unsigned int)data.temperature % 100,
 	    (unsigned int)data.humidity / 1000,
 	    (unsigned int)data.humidity % 1000);
 
@@ -191,6 +197,18 @@ int main(void)
 	  if (gas_sensor.power_mode == BME680_FORCED_MODE) {
 	    rslt = bme680_set_sensor_mode(&gas_sensor);
 	  }
+
+
+
+
+
+
+
+
+
+	  //HAL_USART_Transmit(&husart2, tx_buffer, 27, 10);
+	  //HAL_Delay(10000);
+
 
     /* USER CODE BEGIN 3 */
   }

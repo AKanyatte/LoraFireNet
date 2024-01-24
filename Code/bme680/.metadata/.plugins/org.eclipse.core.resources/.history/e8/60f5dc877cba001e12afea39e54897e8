@@ -57,7 +57,8 @@ USART_HandleTypeDef husart2;
 
 // Data used during BME680 sampling
 struct bme680_dev gas_sensor;
-char i2c_reading_buf[100];
+char i2c_reading_buf1[100];
+char i2c_reading_buf2[100];
 int8_t rslt = BME680_OK;
 
 /* Private function prototypes -----------------------------------------------*/
@@ -162,6 +163,12 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
+
+
+
+
+
+
 	  // Allow BME680 to sample environment
 	  HAL_Delay(min_sampling_period);
 
@@ -170,19 +177,19 @@ int main(void)
 
 	  // Format results into a human readable string
 	  sprintf(i2c_reading_buf,
-	    "T: %u.%u degC\r\n",
+	    "T: %u.%u degC",
 	    (unsigned int)data.temperature / 100,
 	    (unsigned int)data.temperature % 100);
 
-	  HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
-
-	  sprintf(i2c_reading_buf,
+	  sprintf(i2c_reading_buf2,
 	    "H: %u.%u %%rH\r\n",
 	    (unsigned int)data.humidity / 1000,
 	    (unsigned int)data.humidity % 1000);
 
+
+
 	  // Publish result to connected PC
-	  HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
+	  HAL_USART_Transmit(&husart2, i2c_reading_buf1, i2c_reading_buf2, 27, 10);
 
 	  // Wait between samples
 	  HAL_Delay(DELAY_PERIOD_MS);
@@ -191,6 +198,18 @@ int main(void)
 	  if (gas_sensor.power_mode == BME680_FORCED_MODE) {
 	    rslt = bme680_set_sensor_mode(&gas_sensor);
 	  }
+
+
+
+
+
+
+
+
+
+	  //HAL_USART_Transmit(&husart2, tx_buffer, 27, 10);
+	  //HAL_Delay(10000);
+
 
     /* USER CODE BEGIN 3 */
   }

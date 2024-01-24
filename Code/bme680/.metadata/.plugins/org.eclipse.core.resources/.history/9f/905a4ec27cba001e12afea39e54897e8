@@ -162,6 +162,12 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
+
+
+
+
+
+
 	  // Allow BME680 to sample environment
 	  HAL_Delay(min_sampling_period);
 
@@ -170,7 +176,7 @@ int main(void)
 
 	  // Format results into a human readable string
 	  sprintf(i2c_reading_buf,
-	    "T: %u.%u degC\r\n",
+	    "T: %u.%u degC",
 	    (unsigned int)data.temperature / 100,
 	    (unsigned int)data.temperature % 100);
 
@@ -191,6 +197,18 @@ int main(void)
 	  if (gas_sensor.power_mode == BME680_FORCED_MODE) {
 	    rslt = bme680_set_sensor_mode(&gas_sensor);
 	  }
+
+
+
+
+
+
+
+
+
+	  //HAL_USART_Transmit(&husart2, tx_buffer, 27, 10);
+	  //HAL_Delay(10000);
+
 
     /* USER CODE BEGIN 3 */
   }
