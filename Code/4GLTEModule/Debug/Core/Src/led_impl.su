@@ -1,0 +1,4 @@
+../Core/Src/led_impl.c:17:6:initGPIO	4	static
+../Core/Src/led_impl.c:30:6:boardled_on	4	static
+../Core/Src/led_impl.c:35:6:boardled_off	4	static
+../Core/Src/led_impl.c:40:6:delay	16	static
