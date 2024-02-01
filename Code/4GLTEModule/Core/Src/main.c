@@ -44,12 +44,13 @@
 
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart1;
-UART_HandleTypeDef huart2;
+USART_HandleTypeDef husart2;
 
 /* USER CODE BEGIN PV */
 #define PREF_SMS_STORAGE "\"SM\""
-char ATcommand[80];
-uint8_t ATisOK = 0;
+char AT_command[200];
+char mobile_num[] = "4039034943";
+uint8_t AT_is_OK = 0;
 uint8_t slot = 0;
 uint8_t rx_buffer[100] = {0};
 uint8_t rx_index = 0;
@@ -60,7 +61,7 @@ uint8_t rx_data;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_USART2_UART_Init(void);
+static void MX_USART2_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -99,26 +100,44 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART2_UART_Init();
+  MX_USART2_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   boardled_on();
 
-  while(!ATisOK)
-    {
-      sprintf(ATcommand,"AT\r\n");
-      HAL_UART_Transmit(&huart1,(uint8_t *)ATcommand,strlen(ATcommand),1000);
-      HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
-      HAL_Delay(1000);
-      if(strstr((char *)rx_buffer,"\r\nOK\r\n"))
-      {
-    	boardled_off();
-        ATisOK = 1;
-      }
-      HAL_Delay(1000);
-      memset(rx_buffer,0,sizeof(rx_buffer));
-    }
+  while(!AT_is_OK)
+  {
+	  sprintf(AT_command,"AT\r\n");
+	  HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+	  HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
+	  HAL_Delay(1000);
+	  if(strstr((char *)rx_buffer,"\r\nOK\r\n"))
+	  {
+		  boardled_off();
+		  AT_is_OK = 1;
+	  }
+	  HAL_Delay(1000);
+	  memset(rx_buffer,0,sizeof(rx_buffer));
+  }
 
+  sprintf(AT_command,"AT+CMGF=1\r\n");
+  HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+  HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
+  HAL_Delay(1000);
+  memset(rx_buffer,0,sizeof(rx_buffer));
+
+
+  sprintf(AT_command,"AT+CMGS=\"%s\"\r\n", mobile_num);
+  HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+  HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
+  HAL_Delay(100);
+  memset(rx_buffer,0,sizeof(rx_buffer));
+
+  sprintf(AT_command,"Hello from STM%c", 0x1A);
+  HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+  HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
+  memset(rx_buffer,0,sizeof(rx_buffer));
+  HAL_Delay(4000);
 
   /* USER CODE END 2 */
 
@@ -227,7 +246,7 @@ static void MX_USART1_UART_Init(void)
   * @param None
   * @retval None
   */
-static void MX_USART2_UART_Init(void)
+static void MX_USART2_Init(void)
 {
 
   /* USER CODE BEGIN USART2_Init 0 */
@@ -237,17 +256,16 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 1 */
 
   /* USER CODE END USART2_Init 1 */
-  huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
-  huart2.Init.WordLength = UART_WORDLENGTH_8B;
-  huart2.Init.StopBits = UART_STOPBITS_1;
-  huart2.Init.Parity = UART_PARITY_NONE;
-  huart2.Init.Mode = UART_MODE_TX_RX;
-  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  if (HAL_UART_Init(&huart2) != HAL_OK)
+  husart2.Instance = USART2;
+  husart2.Init.BaudRate = 115200;
+  husart2.Init.WordLength = USART_WORDLENGTH_8B;
+  husart2.Init.StopBits = USART_STOPBITS_1;
+  husart2.Init.Parity = USART_PARITY_NONE;
+  husart2.Init.Mode = USART_MODE_TX_RX;
+  husart2.Init.CLKPolarity = USART_POLARITY_LOW;
+  husart2.Init.CLKPhase = USART_PHASE_1EDGE;
+  husart2.Init.CLKLastBit = USART_LASTBIT_DISABLE;
+  if (HAL_USART_Init(&husart2) != HAL_OK)
   {
     Error_Handler();
   }
