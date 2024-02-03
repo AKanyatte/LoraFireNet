@@ -6,6 +6,7 @@
  */
 #include "send_data.h"
 
+
 void send_at(void)
 {
 	char AT_command[20];
@@ -49,6 +50,7 @@ void set_sms_mode(void)
 	    memset(rx_buffer,0,sizeof(rx_buffer));
 		set_sms_mode();
 	}
+	HAL_Delay(1000);
 }
 
 void send_sms(void)
@@ -59,7 +61,6 @@ void send_sms(void)
 
 	sprintf(AT_command,"AT+CMGS=\"%s\"\r\n", mobile_num);
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
 	HAL_Delay(100);
 	memset(rx_buffer,0,sizeof(rx_buffer));
 

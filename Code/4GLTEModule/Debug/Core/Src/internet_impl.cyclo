@@ -1,0 +1,3 @@
+../Core/Src/internet_impl.c:10:6:start_service	2
+../Core/Src/internet_impl.c:30:6:stop_service	2
+../Core/Src/internet_impl.c:51:6:access_server	1
