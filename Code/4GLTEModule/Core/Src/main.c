@@ -21,8 +21,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "string.h"
-#include "stdio.h"
 #include "led.h"
 #include "send_data.h"
 
@@ -102,7 +100,7 @@ int main(void)
   set_sms_mode();
   send_sms();
 
-  boarled_off();
+  boardled_off();
 
   /* USER CODE END 2 */
 

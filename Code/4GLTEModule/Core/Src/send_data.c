@@ -6,7 +6,6 @@
  */
 #include "send_data.h"
 
-
 void send_at(void)
 {
 	char AT_command[20];
