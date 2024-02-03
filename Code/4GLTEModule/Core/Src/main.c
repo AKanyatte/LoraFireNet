@@ -24,6 +24,7 @@
 #include "string.h"
 #include "stdio.h"
 #include "led.h"
+#include "send_data.h"
 
 /* USER CODE END Includes */
 
@@ -47,14 +48,6 @@ UART_HandleTypeDef huart1;
 USART_HandleTypeDef husart2;
 
 /* USER CODE BEGIN PV */
-#define PREF_SMS_STORAGE "\"SM\""
-char AT_command[200];
-char mobile_num[] = "4039034943";
-uint8_t AT_is_OK = 0;
-uint8_t slot = 0;
-uint8_t rx_buffer[100] = {0};
-uint8_t rx_index = 0;
-uint8_t rx_data;
 
 /* USER CODE END PV */
 
@@ -105,39 +98,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
   boardled_on();
 
-  while(!AT_is_OK)
-  {
-	  sprintf(AT_command,"AT\r\n");
-	  HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	  HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
-	  HAL_Delay(1000);
-	  if(strstr((char *)rx_buffer,"\r\nOK\r\n"))
-	  {
-		  boardled_off();
-		  AT_is_OK = 1;
-	  }
-	  HAL_Delay(1000);
-	  memset(rx_buffer,0,sizeof(rx_buffer));
-  }
+  send_at();
+  set_sms_mode();
+  send_sms();
 
-  sprintf(AT_command,"AT+CMGF=1\r\n");
-  HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-  HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
-  HAL_Delay(1000);
-  memset(rx_buffer,0,sizeof(rx_buffer));
-
-
-  sprintf(AT_command,"AT+CMGS=\"%s\"\r\n", mobile_num);
-  HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-  HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
-  HAL_Delay(100);
-  memset(rx_buffer,0,sizeof(rx_buffer));
-
-  sprintf(AT_command,"Hello from STM%c", 0x1A);
-  HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-  HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
-  memset(rx_buffer,0,sizeof(rx_buffer));
-  HAL_Delay(4000);
+  boarled_off();
 
   /* USER CODE END 2 */
 
