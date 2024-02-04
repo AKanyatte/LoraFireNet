@@ -17,7 +17,15 @@ extern UART_HandleTypeDef huart1;
 
 void start_service(void);
 void stop_service(void);
-void access_server(void);
+void set_pdp(void);
+void select_application_mode(void);
+void set_send_mode(void);
+void configure_param(void);
+void set_timeout(void);
+void get_ipaddr(void);
+void setup_tcp_connection(void);
+void destroy_tcp_connection(void);
+
 
 
 #endif /* INC_INTERNET_IMPL_H_ */
