@@ -1,3 +1,10 @@
-../Core/Src/internet_impl.c:10:6:start_service	48	static
-../Core/Src/internet_impl.c:30:6:stop_service	48	static
-../Core/Src/internet_impl.c:51:6:access_server	4	static
+../Core/Src/internet_impl.c:10:6:start_service	112	static
+../Core/Src/internet_impl.c:32:6:stop_service	112	static
+../Core/Src/internet_impl.c:53:6:set_pdp	232	static
+../Core/Src/internet_impl.c:72:6:select_application_mode	112	static
+../Core/Src/internet_impl.c:92:6:set_send_mode	112	static
+../Core/Src/internet_impl.c:111:6:configure_param	208	static
+../Core/Src/internet_impl.c:130:6:set_timeout	208	static
+../Core/Src/internet_impl.c:149:6:get_ipaddr	160	static
+../Core/Src/internet_impl.c:168:6:setup_tcp_connection	392	static
+../Core/Src/internet_impl.c:188:6:destroy_tcp_connection	160	static
