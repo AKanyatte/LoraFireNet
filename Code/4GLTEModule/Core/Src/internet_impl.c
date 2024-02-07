@@ -11,44 +11,50 @@ void start_service(void)
 {
 	char AT_command[50];
 	uint8_t rx_buffer[50] = {0};
+	uint8_t NETOPEN_is_OK = 0;
 
-	sprintf(AT_command,"AT+NETOPEN\r\n");
-	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	sprintf(AT_command,"AT+NETOPEN?\r\n");
-	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
-	HAL_Delay(1000);
-
-	if(strstr((char *)rx_buffer,"+NETOPEN: 1"))
-	{}
-	else
+	while(!NETOPEN_is_OK)
 	{
-		memset(rx_buffer,0,sizeof(rx_buffer));
-		start_service();
+		sprintf(AT_command,"AT+NETOPEN\r\n");
+		HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+		sprintf(AT_command,"AT+NETOPEN?\r\n");
+		HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+		HAL_UART_Receive (&huart1, rx_buffer, 50, 100);
+		HAL_Delay(1000);
+
+		if(strstr((char *)rx_buffer,"+NETOPEN: 1"))
+		{
+			NETOPEN_is_OK = 1;
+		}
+
+		HAL_Delay(1000);
+
 	}
-	HAL_Delay(1000);
 }
 
 void stop_service(void)
 {
 	char AT_command[50];
 	uint8_t rx_buffer[50] = {0};
+	uint8_t NETCLOSE_is_OK = 0;
 
-	sprintf(AT_command,"AT+NETCLOSE\r\n");
-	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
-	HAL_Delay(1000);
-
-	if(strstr((char *)rx_buffer,"OK"))
-	{}
-	else
+	while(!NETCLOSE_is_OK)
 	{
-		memset(rx_buffer,0,sizeof(rx_buffer));
-		stop_service();
-	}
+		sprintf(AT_command,"AT+NETCLOSE\r\n");
+		HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+		HAL_UART_Receive (&huart1, rx_buffer, 50, 100);
+		HAL_Delay(1000);
 
-	HAL_Delay(1000);
+		if(strstr((char *)rx_buffer,"OK"))
+		{
+			NETCLOSE_is_OK = 1;
+		}
+
+		HAL_Delay(1000);
+	}
 }
+
+
 
 void set_pdp(void)
 {
@@ -58,15 +64,10 @@ void set_pdp(void)
 
 	sprintf(AT_command,"AT+CGDCONT=1,\"IP\",\"%s\",\"0.0.0.0\",0,0\r\n",apn);
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
+	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
 
-	if(strstr((char *)rx_buffer,"OK"))
-	{}
-	else
-	{
-	    memset(rx_buffer,0,sizeof(rx_buffer));
-		set_pdp();
-	}
+	//if(strstr((char *)rx_buffer,"OK"))
+	//{}
 }
 
 void select_application_mode(void)
@@ -76,17 +77,10 @@ void select_application_mode(void)
 
 	sprintf(AT_command,"AT+CIPMODE=0\r\n");
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
 
-	HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
-
-	if(strstr((char *)rx_buffer,"OK"))
-	{}
-	else
-	{
-		memset(rx_buffer,0,sizeof(rx_buffer));
-		select_application_mode();
-	}
-
+	//if(strstr((char *)rx_buffer,"OK"))
+	//{}
 }
 
 void set_send_mode(void)
@@ -96,16 +90,10 @@ void set_send_mode(void)
 
 	sprintf(AT_command,"AT+CIPSENDMODE=0\r\n");
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
+	HAL_UART_Receive (&huart1, rx_buffer, 50), 100);
 
-	if(strstr((char *)rx_buffer,"OK"))
-	{}
-	else
-	{
-		memset(rx_buffer,0,sizeof(rx_buffer));
-		select_application_mode();
-	}
-
+	//if(strstr((char *)rx_buffer,"OK"))
+	//{}
 }
 
 void configure_param(void)
@@ -115,16 +103,10 @@ void configure_param(void)
 
 	sprintf(AT_command,	"AT+CIPCCFG=10,0,0,0,1,0,30000\r\n");
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
+	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
 
-	if(strstr((char *)rx_buffer,"OK"))
-	{}
-	else
-	{
-		memset(rx_buffer,0,sizeof(rx_buffer));
-		select_application_mode();
-	}
-
+	//if(strstr((char *)rx_buffer,"OK"))
+	//{}
 }
 
 void set_timeout(void)
@@ -134,16 +116,10 @@ void set_timeout(void)
 
 	sprintf(AT_command,	"AT+CIPTIMEOUT=30000,15000,15000\r\n");
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
+	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
 
-	if(strstr((char *)rx_buffer,"OK"))
-	{}
-	else
-	{
-		memset(rx_buffer,0,sizeof(rx_buffer));
-		select_application_mode();
-	}
-
+	//if(strstr((char *)rx_buffer,"OK"))
+	//{}
 }
 
 void get_ipaddr(void)
@@ -153,16 +129,10 @@ void get_ipaddr(void)
 
 	sprintf(AT_command, "AT+IPADDR\r\n");
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
+	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
 
-	if(strstr((char *)rx_buffer,"+IPADDR"))
-	{}
-	else
-	{
-		memset(rx_buffer,0,sizeof(rx_buffer));
-		select_application_mode();
-	}
-
+	//if(strstr((char *)rx_buffer,"+IPADDR"))
+	//{}
 }
 
 void setup_tcp_connection(void)
@@ -174,32 +144,23 @@ void setup_tcp_connection(void)
 
 	sprintf(AT_command, "AT+CIPOPEN=0,\"TCP\",\"%s\",%d\r\n",server,port);
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
+	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
 
-	if(strstr((char *)rx_buffer,"OK"))
-	{}
-	else
-	{
-		memset(rx_buffer,0,sizeof(rx_buffer));
-		select_application_mode();
-	}
+	//if(strstr((char *)rx_buffer,"OK"))
+	//{}
 }
 
 void destroy_tcp_connection(void)
 {
 	char AT_command[50];
-	uint8_t rx_buffer[100] = {0};
+	uint8_t rx_buffer[50] = {0};
 
 	sprintf(AT_command, "AT+CIPCLOSE=0\r\n");
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
+	HAL_UART_Receive (&huart1, rx_buffer, 50, 100);
 
-	if(strstr((char *)rx_buffer,"OK"))
-	{}
-	else
-	{
-		memset(rx_buffer,0,sizeof(rx_buffer));
-		select_application_mode();
-	}
+	//if(strstr((char *)rx_buffer,"OK"))
+	//{}
 }
+
 
