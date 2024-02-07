@@ -17,17 +17,14 @@ void send_at(void)
 	{
 		sprintf(AT_command, "AT\r\n");
 		HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-		HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
+		HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
+		HAL_UART_Receive (&huart1, rx_buffer, 30, 100);
+		HAL_USART_Transmit(&husart2,rx_buffer,30,100);
 		HAL_Delay(1000);
 
-		if(strstr((char *)rx_buffer,"\r\nOK\r\n"))
+		if(strstr((char *)rx_buffer,"OK"))
 		{
 			AT_is_OK = 1;
-		}
-		else
-		{
-			memset(rx_buffer,0,sizeof(rx_buffer));
-			send_at();
 		}
 		HAL_Delay(1000);
 	}
@@ -37,20 +34,25 @@ void set_sms_mode(void)
 {
 	char AT_command[20];
 	uint8_t rx_buffer[30] = {0};
+	uint8_t text_mode_set = 0;
 
-	sprintf(AT_command,"AT+CMGF=1\r\n");
-	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
-	HAL_Delay(1000);
-
-	if(strstr((char *)rx_buffer,"\r\nOK\r\n"))
-	{}
-	else
+	while(!text_mode_set)
 	{
-	    memset(rx_buffer,0,sizeof(rx_buffer));
-		set_sms_mode();
+		sprintf(AT_command,"AT+CMGF=1\r\n");
+		HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+		HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
+		HAL_UART_Receive (&huart1, rx_buffer,30, 100);
+		HAL_USART_Transmit(&husart2,rx_buffer,30,100);
+
+		HAL_Delay(1000);
+
+		if(strstr((char *)rx_buffer,"OK"))
+		{
+			text_mode_set = 1;
+		}
+
+		HAL_Delay(1000);
 	}
-	HAL_Delay(1000);
 }
 
 void send_sms(void)
@@ -61,20 +63,15 @@ void send_sms(void)
 
 	sprintf(AT_command,"AT+CMGS=\"%s\"\r\n", mobile_num);
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
 	HAL_Delay(100);
 	memset(rx_buffer,0,sizeof(rx_buffer));
 
 	sprintf(AT_command,"Hello from STM%c", 0x1A);
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, sizeof(rx_buffer), 100);
-
-	if(strstr((char *)rx_buffer,"+CMGS"))
-	{}
-	else
-	{
-		memset(rx_buffer,0,sizeof(rx_buffer));
-		send_sms();
-	}
+	//HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
+	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
+	memset(rx_buffer,0,sizeof(rx_buffer));
 	HAL_Delay(4000);
 }
 

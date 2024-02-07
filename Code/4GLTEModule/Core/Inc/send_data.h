@@ -14,6 +14,8 @@
 #include "stm32l432xx.h"
 
 extern UART_HandleTypeDef huart1;
+extern USART_HandleTypeDef husart2;
+
 
 void send_at(void);
 void set_sms_mode(void);

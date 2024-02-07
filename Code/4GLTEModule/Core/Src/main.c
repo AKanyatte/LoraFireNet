@@ -46,6 +46,11 @@ UART_HandleTypeDef huart1;
 USART_HandleTypeDef husart2;
 
 /* USER CODE BEGIN PV */
+char AT_command[200];
+char mobile_num[] = "4039034943";
+uint8_t AT_is_OK = 0;
+uint8_t rx_buffer[100] = {0};
+
 
 /* USER CODE END PV */
 

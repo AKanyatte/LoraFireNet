@@ -153,7 +153,7 @@ int main(void)
         To configure the wake up timer to 5s the WakeUpCounter is set to 0x2710:
         RTC_WAKEUPCLOCK_RTCCLK_DIV = RTCCLK_Div16 = 16
         Wake-up Time Base = 16 /(32KHz) = 0.0005 seconds
-        ==> WakeUpCounter = ~ 30s/0.0005s = 60000 = 0x2710
+        ==> WakeUpCounter = ~ 30s/0.0005s = 60000 = 0xEA60
       */
 
   if(HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0xEA60, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
