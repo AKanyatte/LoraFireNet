@@ -64,8 +64,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 SPI_HandleTypeDef hspi1;
-
 USART_HandleTypeDef husart2;
+USART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
@@ -75,6 +75,7 @@ USART_HandleTypeDef husart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_Init(void);
+static void MX_USART2_UART_Init(void);
 static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -117,6 +118,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_Init();
+  //MX_USART2_UART_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
@@ -216,8 +218,6 @@ void LoRa_SendData(uint8_t *data, uint16_t size) {
 	    USART2_SendString(" ");
 	  }
 
-
-
 	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
 
 	  // Set LoRa mode, transmit mode
@@ -225,6 +225,8 @@ void LoRa_SendData(uint8_t *data, uint16_t size) {
 	  HAL_SPI_Transmit(&hspi1, REG_OP_MODE | 0x80, 1, HAL_MAX_DELAY);  // Set write command
 	  HAL_SPI_Transmit(&hspi1, 0x83, 1, HAL_MAX_DELAY);  // Set transmit mode
 	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
+
+
 
 
 	  USART2_SendString("Sending data to LoRa: ");

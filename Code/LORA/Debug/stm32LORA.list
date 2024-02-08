@@ -29,23 +29,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
  12 .comment      00000043  00000000  00000000  0002008c  2**0
                   CONTENTS, READONLY
- 13 .debug_info   0000ae53  00000000  00000000  000200cf  2**0
+ 13 .debug_info   0000ae64  00000000  00000000  000200cf  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_abbrev 00001f3f  00000000  00000000  0002af22  2**0
+ 14 .debug_abbrev 00001f3f  00000000  00000000  0002af33  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_aranges 00000b10  00000000  00000000  0002ce68  2**3
+ 15 .debug_aranges 00000b10  00000000  00000000  0002ce78  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_rnglists 00000859  00000000  00000000  0002d978  2**0
+ 16 .debug_rnglists 00000859  00000000  00000000  0002d988  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_macro  0002005e  00000000  00000000  0002e1d1  2**0
+ 17 .debug_macro  0002005e  00000000  00000000  0002e1e1  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   0000cbcd  00000000  00000000  0004e22f  2**0
+ 18 .debug_line   0000cbcd  00000000  00000000  0004e23f  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000bf026  00000000  00000000  0005adfc  2**0
+ 19 .debug_str    000bf02d  00000000  00000000  0005ae0c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_frame  00003104  00000000  00000000  00119e24  2**2
+ 20 .debug_frame  00003104  00000000  00000000  00119e3c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000061  00000000  00000000  0011cf28  2**0
+ 21 .debug_line_str 00000061  00000000  00000000  0011cf40  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -183,6 +183,7 @@ int main(void)
  8000292:	f000 fa3b 	bl	800070c <MX_GPIO_Init>
   MX_USART2_Init();
  8000296:	f000 fa0d 	bl	80006b4 <MX_USART2_Init>
+  //MX_USART2_UART_Init();
   MX_SPI1_Init();
  800029a:	f000 f9cf 	bl	800063c <MX_SPI1_Init>
   while (1)
@@ -505,8 +506,6 @@ void LoRa_SendData(uint8_t *data, uint16_t size) {
  80004dc:	d3db      	bcc.n	8000496 <LoRa_SendData+0x8a>
 	  }
 
-
-
 	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
  80004de:	2201      	movs	r2, #1
  80004e0:	2101      	movs	r1, #1
@@ -536,6 +535,8 @@ void LoRa_SendData(uint8_t *data, uint16_t size) {
  8000510:	2101      	movs	r1, #1
  8000512:	4808      	ldr	r0, [pc, #32]	; (8000534 <LoRa_SendData+0x128>)
  8000514:	f000 fe5c 	bl	80011d0 <HAL_GPIO_WritePin>
+
+
 
 
 	  USART2_SendString("Sending data to LoRa: ");
