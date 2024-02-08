@@ -208,15 +208,7 @@ void LoRa_SendData(uint8_t *data, uint16_t size) {
 
 	  for (uint16_t i = 0; i < size; i++) {
 	    HAL_SPI_Transmit(&hspi1, data[i], 1, HAL_MAX_DELAY);
-
-	    // Print the current byte to USART2
-	    char hex[3];
-	    snprintf(hex, sizeof(hex), "%02X", data[i]);
-	    USART2_SendString(hex);
-	    USART2_SendString(" ");
 	  }
-
-
 
 	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
 
@@ -226,11 +218,9 @@ void LoRa_SendData(uint8_t *data, uint16_t size) {
 	  HAL_SPI_Transmit(&hspi1, 0x83, 1, HAL_MAX_DELAY);  // Set transmit mode
 	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
 
-
 	  USART2_SendString("Sending data to LoRa: ");
 	  USART2_SendString((char *)data);
 	  USART2_SendString("\r\n");
-
 }
 
 void USART2_SendString(char *str) {

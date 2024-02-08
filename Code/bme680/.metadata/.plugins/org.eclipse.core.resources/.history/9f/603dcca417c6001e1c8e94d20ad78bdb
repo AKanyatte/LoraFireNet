@@ -226,11 +226,11 @@ void LoRa_SendData(uint8_t *data, uint16_t size) {
 	  HAL_SPI_Transmit(&hspi1, 0x83, 1, HAL_MAX_DELAY);  // Set transmit mode
 	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
 
-
+	  /*
 	  USART2_SendString("Sending data to LoRa: ");
 	  USART2_SendString((char *)data);
 	  USART2_SendString("\r\n");
-
+	  */
 }
 
 void USART2_SendString(char *str) {
