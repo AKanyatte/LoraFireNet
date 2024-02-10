@@ -17,9 +17,17 @@ void start_service(void)
 	{
 		sprintf(AT_command,"AT+NETOPEN\r\n");
 		HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+		HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
+		HAL_UART_Receive (&huart1, rx_buffer, 50, 100);
+		HAL_USART_Transmit(&husart2,rx_buffer,50,100);
+		HAL_Delay(1000);
+		memset(rx_buffer,0,sizeof(rx_buffer));
+
 		sprintf(AT_command,"AT+NETOPEN?\r\n");
 		HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+		HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
 		HAL_UART_Receive (&huart1, rx_buffer, 50, 100);
+		HAL_USART_Transmit(&husart2,rx_buffer,50,100);
 		HAL_Delay(1000);
 
 		if(strstr((char *)rx_buffer,"+NETOPEN: 1"))
@@ -42,7 +50,9 @@ void stop_service(void)
 	{
 		sprintf(AT_command,"AT+NETCLOSE\r\n");
 		HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+		HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
 		HAL_UART_Receive (&huart1, rx_buffer, 50, 100);
+		HAL_USART_Transmit(&husart2,rx_buffer,50,100);
 		HAL_Delay(1000);
 
 		if(strstr((char *)rx_buffer,"OK"))
@@ -59,15 +69,15 @@ void stop_service(void)
 void set_pdp(void)
 {
 	char AT_command[100];
-	char apn[] = "pda.stm.sk.ca";
+	char apn[] = "inet.stm.sk.ca";//"pda.stm.sk.ca";
 	uint8_t rx_buffer[100] = {0};
 
-	sprintf(AT_command,"AT+CGDCONT=1,\"IP\",\"%s\",\"0.0.0.0\",0,0\r\n",apn);
+	sprintf(AT_command,"AT+CGDCONT=1,\"IPV4V6\",\"%s\",\"0.0.0.0\",0,0\r\n",apn);
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+	HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
 	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
+	HAL_USART_Transmit(&husart2,rx_buffer,100,100);
 
-	//if(strstr((char *)rx_buffer,"OK"))
-	//{}
 }
 
 void select_application_mode(void)
@@ -77,10 +87,10 @@ void select_application_mode(void)
 
 	sprintf(AT_command,"AT+CIPMODE=0\r\n");
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+	HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
 	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
+	HAL_USART_Transmit(&husart2,rx_buffer,50,100);
 
-	//if(strstr((char *)rx_buffer,"OK"))
-	//{}
 }
 
 void set_send_mode(void)
@@ -90,10 +100,9 @@ void set_send_mode(void)
 
 	sprintf(AT_command,"AT+CIPSENDMODE=0\r\n");
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, 50), 100);
-
-	//if(strstr((char *)rx_buffer,"OK"))
-	//{}
+	HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
+	HAL_UART_Receive (&huart1, rx_buffer, 50, 100);
+	HAL_USART_Transmit(&husart2,rx_buffer,50,100);
 }
 
 void configure_param(void)
@@ -101,12 +110,11 @@ void configure_param(void)
 	char AT_command[100];
 	uint8_t rx_buffer[100] = {0};
 
-	sprintf(AT_command,	"AT+CIPCCFG=10,0,0,0,1,0,30000\r\n");
+	sprintf(AT_command,	"AT+CIPCCFG=10,0,0,0,1,0,75000\r\n");
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+	HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
 	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
-
-	//if(strstr((char *)rx_buffer,"OK"))
-	//{}
+	HAL_USART_Transmit(&husart2,rx_buffer,100,100);
 }
 
 void set_timeout(void)
@@ -114,12 +122,12 @@ void set_timeout(void)
 	char AT_command[100];
 	uint8_t rx_buffer[100] = {0};
 
-	sprintf(AT_command,	"AT+CIPTIMEOUT=30000,15000,15000\r\n");
+	sprintf(AT_command,	"AT+CIPTIMEOUT=75000,15000,15000\r\n");
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+	HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
 	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
+	HAL_USART_Transmit(&husart2,rx_buffer,100,100);
 
-	//if(strstr((char *)rx_buffer,"OK"))
-	//{}
 }
 
 void get_ipaddr(void)
@@ -129,25 +137,35 @@ void get_ipaddr(void)
 
 	sprintf(AT_command, "AT+IPADDR\r\n");
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+	HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
 	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
+	HAL_USART_Transmit(&husart2,rx_buffer,100,100);
 
-	//if(strstr((char *)rx_buffer,"+IPADDR"))
-	//{}
 }
 
 void setup_tcp_connection(void)
 {
 	char AT_command[200];
-	char server[] = "https://drive.google.com/drive/folders/1-ngEewE-qfFc6WE9AQIlLAqVE7q_hGha";
+	char server[] = "firebase.googleapis.com";
 	const int port = 80;
 	uint8_t rx_buffer[100] = {0};
+	//uint8_t CIPOPEN_is_OK = 0;
 
-	sprintf(AT_command, "AT+CIPOPEN=0,\"TCP\",\"%s\",%d\r\n",server,port);
-	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
-	HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
+	//while(!CIPOPEN_is_OK)
+	//{
+		sprintf(AT_command, "AT+CIPOPEN=0,\"TCP\",\"%s\",%d\r\n",server,port);
+		HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+		HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
+		HAL_UART_Receive (&huart1, rx_buffer, 100, 100);
+		HAL_USART_Transmit(&husart2,rx_buffer,100,100);
+		HAL_Delay(1000);
 
-	//if(strstr((char *)rx_buffer,"OK"))
-	//{}
+		//if(strstr((char*)rx_buffer, "+CIPOPEN: 0,0"))
+		//{
+		//	CIPOPEN_is_OK = 1;
+		//}
+
+	//}
 }
 
 void destroy_tcp_connection(void)
@@ -157,10 +175,9 @@ void destroy_tcp_connection(void)
 
 	sprintf(AT_command, "AT+CIPCLOSE=0\r\n");
 	HAL_UART_Transmit(&huart1,(uint8_t *)AT_command,strlen(AT_command),1000);
+	HAL_USART_Transmit(&husart2,(uint8_t *)AT_command,strlen(AT_command),1000);
 	HAL_UART_Receive (&huart1, rx_buffer, 50, 100);
+	HAL_USART_Transmit(&husart2,rx_buffer,50,100);
 
-	//if(strstr((char *)rx_buffer,"OK"))
-	//{}
 }
-
 

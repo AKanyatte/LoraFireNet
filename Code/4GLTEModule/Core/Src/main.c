@@ -23,6 +23,8 @@
 /* USER CODE BEGIN Includes */
 #include "led.h"
 #include "send_data.h"
+#include "internet_impl.h"
+#include "http_impl.h"
 
 /* USER CODE END Includes */
 
@@ -46,12 +48,6 @@ UART_HandleTypeDef huart1;
 USART_HandleTypeDef husart2;
 
 /* USER CODE BEGIN PV */
-char AT_command[200];
-char mobile_num[] = "4039034943";
-uint8_t AT_is_OK = 0;
-uint8_t rx_buffer[100] = {0};
-
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -60,12 +56,10 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
 /* USER CODE END 0 */
 
 /**
@@ -99,13 +93,19 @@ int main(void)
   MX_USART2_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+
   boardled_on();
-
   send_at();
-  set_sms_mode();
-  send_sms();
-
+  check_status();
+  //set_sms_mode();
+  //send_sms();
+  start_service();
+  get_ipaddr();
+  http_get();
+  http_post();
+  stop_service();
   boardled_off();
+
 
   /* USER CODE END 2 */
 

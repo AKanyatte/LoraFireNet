@@ -14,6 +14,7 @@
 #include "stm32l432xx.h"
 
 extern UART_HandleTypeDef huart1;
+extern USART_HandleTypeDef husart2;
 
 void start_service(void);
 void stop_service(void);

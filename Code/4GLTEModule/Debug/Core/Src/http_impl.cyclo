@@ -1,0 +1,4 @@
+../Core/Src/http_impl.c:14:6:Tx_Rx	1
+../Core/Src/http_impl.c:25:6:check_status	1
+../Core/Src/http_impl.c:33:6:http_get	5
+../Core/Src/http_impl.c:70:6:http_post	5
