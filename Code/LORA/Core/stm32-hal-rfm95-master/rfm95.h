@@ -47,6 +47,7 @@
 
 #define RFM95_EEPROM_CONFIG_MAGIC 0xab67
 
+
 typedef struct {
 
 	uint32_t frequency;
