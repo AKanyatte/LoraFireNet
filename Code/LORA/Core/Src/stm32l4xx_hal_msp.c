@@ -79,8 +79,6 @@ void HAL_MspInit(void)
 
 /**
 * @brief SPI MSP Initialization
-<<<<<<< Updated upstream
-=======
 * This function configures the hardware resources used in this example
 * @param hspi: SPI handle pointer
 * @retval None
@@ -162,23 +160,6 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
   }
 
 }
-
-/**
-* @brief UART MSP Initialization
->>>>>>> Stashed changes
-* This function configures the hardware resources used in this example
-* @param hspi: SPI handle pointer
-* @retval None
-*/
-
-
-/**
-* @brief SPI MSP De-Initialization
-* This function freeze the hardware resources used in this example
-* @param hspi: SPI handle pointer
-* @retval None
-*/
-
 
 /**
 * @brief USART MSP Initialization

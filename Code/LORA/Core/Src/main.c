@@ -88,6 +88,7 @@ USART_HandleTypeDef husart2;
 USART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+char buffer[100];
 
 /* USER CODE END PV */
 
@@ -97,12 +98,15 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_Init(void);
 void MX_USART2_UART_Init(void);
 static void MX_SPI1_Init(void);
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 
 /* USER CODE END 0 */
 
@@ -115,49 +119,6 @@ static void MX_SPI1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
-	rfm95_handle_t rfm95_handle = {
-	        .spi_handle = &hspi1,
-			.nss_port = RFM95_NSS_GPIO_Port,
-			.nss_pin = RFM95_NSS_Pin,
-			//.nrst_port = RFM95_NRST_GPIO_Port,
-			//.nrst_pin = RFM95_NRST_Pin,
-			.device_address = {
-	            0x00, 0x00, 0x00, 0x00
-	        },
-			.application_session_key = {
-	            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-	        },
-			.network_session_key = {
-	            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-	        },
-			.receive_mode = RFM95_RECEIVE_MODE_NONE
-	    };
-
-	    // Initialise RFM95 module.
-	    if (!rfm95_init(&rfm95_handle)) {
-	        printf("RFM95 init failed\n\r");
-	    }
-
-	    uint8_t data_packet[] = {0x01, 0x02, 0x03, 0x04};
-
-	    if (!rfm95_send_receive_cycle(&rfm95_handle, data_packet, sizeof(data_packet))) {
-	        printf("RFM95 send failed\n\r");
-	    } else {
-	        printf("RFM95 send success\n\r");
-	    }
-
-	    void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-	    {
-	        if (GPIO_Pin == RFM95_DIO0_Pin) {
-	            rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO0);
-	        } else if (GPIO_Pin == RFM95_DIO1_Pin) {
-	            rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO1);
-	        } else if (GPIO_Pin == RFM95_DIO5_Pin) {
-	            rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO5);
-	        }
-	    }
-
 
 
   /* USER CODE END 1 */
@@ -185,6 +146,59 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
+  rfm95_handle_t rfm95_handle = {
+    	        .spi_handle = &hspi1,
+    			.nss_port = RFM95_NSS_GPIO_Port,
+    			.nss_pin = RFM95_NSS_Pin,
+    			//.nrst_port = RFM95_NRST_GPIO_Port,
+    			//.nrst_pin = RFM95_NRST_Pin,
+    			.device_address = {
+    	            0x00, 0x00, 0x00, 0x00
+    	        },
+    			.application_session_key = {
+    	            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    	        },
+    			.network_session_key = {
+    	            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    	        },
+    			.receive_mode = RFM95_RECEIVE_MODE_NONE
+    	    };
+
+  sprintf(buffer,"Hello World\r\n");
+  HAL_USART_Transmit(&husart2, buffer, strlen(buffer), 1000);
+
+  	    // Initialise RFM95 module.
+  	    if (!rfm95_init(&rfm95_handle)) {
+  	    	sprintf(buffer,"Initialized\r\n");
+  	    	HAL_USART_Transmit(&husart2, buffer, strlen(buffer), 1000);
+  	       // printf("RFM95 init failed\n\r");
+  	    }
+  	    uint8_t data_packet[] = {0x01, 0x02, 0x03, 0x04};
+
+  	    if (!rfm95_send_receive_cycle(&rfm95_handle, data_packet, sizeof(data_packet))) {
+  	    	sprintf(buffer,"RFM95 send failed\r\n");
+  	    	HAL_USART_Transmit(&husart2, buffer, 100, 10);
+  	        //printf("RFM95 send failed\n\r");
+  	    } else {
+  	       //printf("RFM95 send success\n\r");
+  	      sprintf(buffer,"RFM95 send success\r\n");
+  	      HAL_USART_Transmit(&husart2, buffer, 100, 10);
+  	    }
+
+          // Wait for the acknowledgment packet
+  	    /*
+  	     *uint8_t acknowledgment_packet[sizeof(data_packet)];
+          if (!rfm95_send_receive_cycle(&rfm95_handle, acknowledgment_packet, sizeof(acknowledgment_packet))) {
+              printf("RFM95 acknowledgment receive failed\n\r");
+          } else {
+              printf("RFM95 acknowledgment received\n\r");
+              // Print the acknowledgment packet
+              printf("Ack Packet: ");
+              for (int i = 0; i < sizeof(acknowledgment_packet); i++) {
+                  printf("%02X ", acknowledgment_packet[i]);
+              }
+              printf("\n\r");*/
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -202,7 +216,18 @@ int main(void)
   }
   /* USER CODE END 3 */
 }
-
+/*
+        void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+        {
+            if (GPIO_Pin == RFM95_DIO0_Pin) {
+                rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO0);
+            } else if (GPIO_Pin == RFM95_DIO1_Pin) {
+                rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO1);
+            } else if (GPIO_Pin == RFM95_DIO5_Pin) {
+                rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO5);
+            }
+        }
+*/
 
 
 
@@ -394,6 +419,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
+
 
 #ifdef  USE_FULL_ASSERT
 /**
