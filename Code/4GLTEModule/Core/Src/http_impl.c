@@ -74,9 +74,9 @@ void http_post(void)
 	char content[] = "application/json";
 	uint8_t init_is_OK = 0;
 	uint8_t term_is_OK = 0;
-	int humidity_val = 85;
-	int temp_val = 25;
-	int smoke_val = 450;
+	int humidity_val = 40;
+	int temp_val = 15;
+	int smoke_val = 100;
 
 	while(!init_is_OK)
 	{

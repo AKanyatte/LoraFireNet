@@ -44,6 +44,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+RTC_HandleTypeDef hrtc;
+
 UART_HandleTypeDef huart1;
 USART_HandleTypeDef husart2;
 
@@ -55,6 +57,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_Init(void);
 static void MX_USART1_UART_Init(void);
+static void MX_RTC_Init(void);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
@@ -92,20 +95,135 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_Init();
   MX_USART1_UART_Init();
+  MX_RTC_Init();
   /* USER CODE BEGIN 2 */
+/*
+  char test[20];
+  sprintf(test, "Hello. Testing Standby Mode!\r\n");
 
-  boardled_on();
-  send_at();
-  check_status();
-  //set_sms_mode();
-  //send_sms();
-  start_service();
-  get_ipaddr();
-  http_get();
-  http_post();
-  stop_service();
-  boardled_off();
+  HAL_USART_Transmit(&husart2, (uint8_t*)test, strlen(test), 1000);
 
+  char *str = "About to enter STANDBY MODE\r\n";
+  HAL_USART_Transmit(&husart2, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
+
+  // Disable Wake up Pin
+   HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
+
+      /*  RTC Wake-up Interrupt Generation:
+            Wake-up Time Base = (RTC_WAKEUPCLOCK_RTCCLK_DIV /(LSI))
+            ==> WakeUpCounter = Wake-up Time / Wake-up Time Base
+
+            To configure the wake up timer to 5s the WakeUpCounter is set to 0x2710:
+            RTC_WAKEUPCLOCK_RTCCLK_DIV = RTCCLK_Div16 = 16
+            Wake-up Time Base = 16 /(32KHz) = 0.0005 seconds
+            ==> WakeUpCounter = ~ 30s/0.0005s = 60000 = 0xEA60
+            2 min ~ 240000 =0x3A980
+            5 min ~ 600000 = 0x927C0
+            3600 S ~ 7200000 = 0X6DDD00
+          */
+/*
+  if(HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x927C0, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
+  {
+	  Error_Handler();
+  }
+
+  char *str2 = "STANDBY MODE is on\r\n";
+  HAL_USART_Transmit(&husart2, (uint8_t *)str2, strlen(str2), HAL_MAX_DELAY);
+  HAL_PWR_EnterSTANDBYMode();
+
+  if(__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET)
+   {
+  	  __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB); // clear flag
+  	  char *str = "Wake up from STANDBY MODE\r\n";
+  	  HAL_USART_Transmit(&husart2, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
+  	 boardled_on();
+  	 send_at();
+  	 check_status();
+  	 start_service();
+  	 get_ipaddr();
+  	 http_get();
+  	 http_post();
+     stop_service();
+  	 boardled_off();
+  	 HAL_Delay(200);
+
+  	  // Disable Wake up Pin
+  	  HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN1);
+
+  	  //Deactivate RTC Wake up
+  	  __HAL_RTC_WAKEUPTIMER_CLEAR_FLAG(&hrtc, RTC_ISR_WUTF);
+    }
+
+    // Enter standby mode
+    // Clear WU flag
+    __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+*/
+  char test[20];
+     sprintf(test, "Hello. Testing Standby Mode!\r\n");
+
+     HAL_USART_Transmit(&husart2, (uint8_t*)test, strlen(test), 1000);
+
+
+       if(__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET)
+       {
+     	  __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB); // clear flag
+     	  char *str = "Wake up from STANDBY MODE\r\n";
+     	  HAL_USART_Transmit(&husart2, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
+
+     	 // Blink LED
+     	  /*
+     		  for(int i = 0; i<20; i++)
+     		  {
+     			  	  HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_3);
+     			  	  HAL_Delay(200);
+     		  }*/
+     	   boardled_on();
+     	   send_at();
+     	   check_status();
+     	  //start_service();
+     	 // get_ipaddr();
+     	  //http_get();
+     	  //http_post();
+     	  //stop_service();
+     	    boardled_off();
+     	  //HAL_Delay(200);
+
+     	  // Disable Wake up Pin
+     	  HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN1);
+
+     	  //Deactivate RTC Wake up
+     	  HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
+       }
+
+       // Enter standby mode
+       // Clear WU flag
+       __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+       // Clear RTC Wake Up (WU) flag
+       __HAL_RTC_WAKEUPTIMER_CLEAR_FLAG(&hrtc, RTC_ISR_WUTF);
+
+
+       char *str = "About to enter STANDBY MODE\r\n";
+       HAL_USART_Transmit(&husart2, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
+
+       // Blink LED
+/*
+       for(int i = 0; i<5; i++)
+       {
+     	  HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_3);
+       	  HAL_Delay(750);
+       }*/
+
+       // Disable Wake up Pin
+       HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
+
+       if(HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 120 , RTC_WAKEUPCLOCK_CK_SPRE_16BITS) != HAL_OK)
+       {
+     	  Error_Handler();
+       }
+
+       char *str2 = "STANDBY MODE is on\r\n";
+       HAL_USART_Transmit(&husart2, (uint8_t *)str2, strlen(str2), HAL_MAX_DELAY);
+       HAL_PWR_EnterSTANDBYMode();
 
   /* USER CODE END 2 */
 
@@ -144,8 +262,10 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE|RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_LSE
+                              |RCC_OSCILLATORTYPE_MSI;
   RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
   RCC_OscInitStruct.MSICalibrationValue = 0;
   RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
@@ -172,6 +292,42 @@ void SystemClock_Config(void)
   /** Enable MSI Auto calibration
   */
   HAL_RCCEx_EnableMSIPLLMode();
+}
+
+/**
+  * @brief RTC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RTC_Init(void)
+{
+
+  /* USER CODE BEGIN RTC_Init 0 */
+
+  /* USER CODE END RTC_Init 0 */
+
+  /* USER CODE BEGIN RTC_Init 1 */
+
+  /* USER CODE END RTC_Init 1 */
+
+  /** Initialize RTC Only
+  */
+  hrtc.Instance = RTC;
+  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+  hrtc.Init.AsynchPrediv = 127;
+  hrtc.Init.SynchPrediv = 255;
+  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
+  hrtc.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
+  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  if (HAL_RTC_Init(&hrtc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN RTC_Init 2 */
+
+  /* USER CODE END RTC_Init 2 */
+
 }
 
 /**
