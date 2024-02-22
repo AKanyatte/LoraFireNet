@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "rfm95.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,25 +37,6 @@
 #define REG_IRQ_FLAGS       0x12
 #define REG_DIO_MAPPING_1   0x40
 #define REG_MODEM_CONFIG_1  0x1D
-#define REG_IRQ_FLAGS       0x12
-
-
-#define RFM95_NSS_GPIO_Port     GPIOB
-#define RFM95_NSS_Pin           GPIO_PIN_0
-
-//#define RFM95_NRST_GPIO_Port    GPIOB
-//#define RFM95_NRST_Pin          GPIO_PIN_1
-
-#define RFM95_DIO0_Pin          GPIO_PIN_10
-#define RFM95_DIO0_Port         GPIOA
-
-#define RFM95_DIO1_Pin          GPIO_PIN_9
-#define RFM95_DIO1_Port         GPIOA
-
-#define RFM95_DIO5_Pin          GPIO_PIN_8
-#define RFM95_DIO5_Port         GPIOA
-
-
 
 
 /* Private includes ----------------------------------------------------------*/
@@ -84,11 +64,10 @@
 
 /* Private variables ---------------------------------------------------------*/
 SPI_HandleTypeDef hspi1;
+
 USART_HandleTypeDef husart2;
-USART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-char buffer[100];
 
 /* USER CODE END PV */
 
@@ -96,10 +75,7 @@ char buffer[100];
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_Init(void);
-void MX_USART2_UART_Init(void);
 static void MX_SPI1_Init(void);
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -107,18 +83,17 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-
 /* USER CODE END 0 */
 
 /**
   * @brief  The application entry point.
   * @retval int
   */
-
-
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+  LoRa_Init();
+
 
 
   /* USER CODE END 1 */
@@ -142,62 +117,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_Init();
-  //MX_USART2_UART_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-
-  rfm95_handle_t rfm95_handle = {
-    	        .spi_handle = &hspi1,
-    			.nss_port = RFM95_NSS_GPIO_Port,
-    			.nss_pin = RFM95_NSS_Pin,
-    			//.nrst_port = RFM95_NRST_GPIO_Port,
-    			//.nrst_pin = RFM95_NRST_Pin,
-    			.device_address = {
-    	            0x00, 0x00, 0x00, 0x00
-    	        },
-    			.application_session_key = {
-    	            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-    	        },
-    			.network_session_key = {
-    	            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-    	        },
-    			.receive_mode = RFM95_RECEIVE_MODE_NONE
-    	    };
-
-  sprintf(buffer,"Hello World\r\n");
-  HAL_USART_Transmit(&husart2, buffer, strlen(buffer), 1000);
-
-  	    // Initialise RFM95 module.
-  	    if (!rfm95_init(&rfm95_handle)) {
-  	    	sprintf(buffer,"Initialized\r\n");
-  	    	HAL_USART_Transmit(&husart2, buffer, strlen(buffer), 1000);
-  	       // printf("RFM95 init failed\n\r");
-  	    }
-  	    uint8_t data_packet[] = {0x01, 0x02, 0x03, 0x04};
-
-  	    if (!rfm95_send_receive_cycle(&rfm95_handle, data_packet, sizeof(data_packet))) {
-  	    	sprintf(buffer,"RFM95 send failed\r\n");
-  	    	HAL_USART_Transmit(&husart2, buffer, 100, 10);
-  	        //printf("RFM95 send failed\n\r");
-  	    } else {
-  	       //printf("RFM95 send success\n\r");
-  	      sprintf(buffer,"RFM95 send success\r\n");
-  	      HAL_USART_Transmit(&husart2, buffer, 100, 10);
-  	    }
-
-          // Wait for the acknowledgment packet
-  	    /*
-  	     *uint8_t acknowledgment_packet[sizeof(data_packet)];
-          if (!rfm95_send_receive_cycle(&rfm95_handle, acknowledgment_packet, sizeof(acknowledgment_packet))) {
-              printf("RFM95 acknowledgment receive failed\n\r");
-          } else {
-              printf("RFM95 acknowledgment received\n\r");
-              // Print the acknowledgment packet
-              printf("Ack Packet: ");
-              for (int i = 0; i < sizeof(acknowledgment_packet); i++) {
-                  printf("%02X ", acknowledgment_packet[i]);
-              }
-              printf("\n\r");*/
 
   /* USER CODE END 2 */
 
@@ -207,28 +128,115 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
+	    // Your data to be transmitted
+	    uint8_t dataToSend[] = "Hello, LoRa!";
 
+	    // Send data to LoRa module
+	    LoRa_SendData(dataToSend, sizeof(dataToSend));
 
-
-
+	    // Delay before sending again (you may need to adjust this based on your requirements)
+	    HAL_Delay(5000);
 
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
-/*
-        void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-        {
-            if (GPIO_Pin == RFM95_DIO0_Pin) {
-                rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO0);
-            } else if (GPIO_Pin == RFM95_DIO1_Pin) {
-                rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO1);
-            } else if (GPIO_Pin == RFM95_DIO5_Pin) {
-                rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO5);
-            }
-        }
-*/
 
+void LoRa_Init() {
+  // Implement the initialization of the LoRa module here
+  // This may include setting LoRa parameters, frequency, etc.
+
+	  // Set LoRa mode, sleep mode
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);  // Set NSS low
+	  HAL_SPI_Transmit(&hspi1, REG_OP_MODE | 0x80, 1, HAL_MAX_DELAY);  // Set write command
+	  HAL_SPI_Transmit(&hspi1, 0x80, 1, HAL_MAX_DELAY);  // Set sleep mode
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
+
+	  // Set LoRa mode, standby mode
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);  // Set NSS low
+	  HAL_SPI_Transmit(&hspi1, REG_OP_MODE | 0x80, 1, HAL_MAX_DELAY);  // Set write command
+	  HAL_SPI_Transmit(&hspi1, 0x81, 1, HAL_MAX_DELAY);  // Set standby mode
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
+
+	  // Configure frequency (915MHz in this example)
+	  uint32_t frequency = 915000000;  // Set your desired frequency
+	  uint32_t frf = (frequency << 19) / 32000000;
+
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);  // Set NSS low
+	  HAL_SPI_Transmit(&hspi1, REG_FRF_MSB | 0x80, 1, HAL_MAX_DELAY);  // Set write command
+	  HAL_SPI_Transmit(&hspi1, (frf >> 16) & 0xFF, 1, HAL_MAX_DELAY);
+	  HAL_SPI_Transmit(&hspi1, (frf >> 8) & 0xFF, 1, HAL_MAX_DELAY);
+	  HAL_SPI_Transmit(&hspi1, frf & 0xFF, 1, HAL_MAX_DELAY);
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
+
+	  // Configure LoRa parameters
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);  // Set NSS low
+	  HAL_SPI_Transmit(&hspi1, REG_LORA_CONFIG_1 | 0x80, 1, HAL_MAX_DELAY);  // Set write command
+	  HAL_SPI_Transmit(&hspi1, 0x72, 1, HAL_MAX_DELAY);  // SF = 7, BW = 125kHz
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
+
+	  // Set PA config
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);  // Set NSS low
+	  HAL_SPI_Transmit(&hspi1, REG_PA_CONFIG | 0x80, 1, HAL_MAX_DELAY);  // Set write command
+	  HAL_SPI_Transmit(&hspi1, 0x8F, 1, HAL_MAX_DELAY);  // Set PA max power
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
+
+
+
+}
+
+void LoRa_SendData(uint8_t *data, uint16_t size) {
+  // Implement code to send data to LoRa module through SPI
+  // You'll need to handle the SPI communication based on your specific setup
+  // Use the HAL_SPI_Transmit function or similar for SPI communication
+
+	  // Set LoRa mode, standby mode
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);  // Set NSS low
+	  HAL_SPI_Transmit(&hspi1, REG_OP_MODE | 0x80, 1, HAL_MAX_DELAY);  // Set write command
+	  HAL_SPI_Transmit(&hspi1, 0x81, 1, HAL_MAX_DELAY);  // Set standby mode
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
+
+	  // Set FIFO address pointer
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);  // Set NSS low
+	  HAL_SPI_Transmit(&hspi1, REG_FIFO_ADDR_PTR | 0x80, 1, HAL_MAX_DELAY);  // Set write command
+	  HAL_SPI_Transmit(&hspi1, 0x80, 1, HAL_MAX_DELAY);  // Set FIFO address pointer to 0
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
+
+	  // Write data to FIFO
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);  // Set NSS low
+	  HAL_SPI_Transmit(&hspi1, REG_FIFO | 0x80, 1, HAL_MAX_DELAY);  // Set write command
+
+	  for (uint16_t i = 0; i < size; i++) {
+	    HAL_SPI_Transmit(&hspi1, data[i], 1, HAL_MAX_DELAY);
+
+	    // Print the current byte to USART2
+	    char hex[3];
+	    snprintf(hex, sizeof(hex), "%02X", data[i]);
+	    USART2_SendString(hex);
+	    USART2_SendString(" ");
+	  }
+
+
+
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
+
+	  // Set LoRa mode, transmit mode
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);  // Set NSS low
+	  HAL_SPI_Transmit(&hspi1, REG_OP_MODE | 0x80, 1, HAL_MAX_DELAY);  // Set write command
+	  HAL_SPI_Transmit(&hspi1, 0x83, 1, HAL_MAX_DELAY);  // Set transmit mode
+	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  // Set NSS high
+
+
+	  /*
+	  USART2_SendString("Sending data to LoRa: ");
+	  USART2_SendString((char *)data);
+	  USART2_SendString("\r\n");
+	*/
+}
+
+void USART2_SendString(char *str) {
+  HAL_USART_Transmit(&husart2, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
+}
 
 
 /**
@@ -419,7 +427,6 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
 
 #ifdef  USE_FULL_ASSERT
 /**
