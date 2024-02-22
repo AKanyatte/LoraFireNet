@@ -49,6 +49,9 @@ typedef struct
 			uint8_t pa_select : 1;
 		};
 		uint8_t buffer;
+
+	    uint8_t rx_payload_length;
+	    uint8_t rx_payload[RFM95_REGISTER_MAX_PAYLOAD_LENGTH];
 	};
 } rfm95_register_pa_config_t;
 

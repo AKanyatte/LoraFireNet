@@ -18,126 +18,52 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "rfm95.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+// RFM95 register addresses
+#define REG_FIFO            0x00
+#define REG_OP_MODE         0x01
+#define REG_FRF_MSB         0x06
+#define REG_FRF_MID         0x07
+#define REG_FRF_LSB         0x08
+#define REG_PA_CONFIG       0x09
+#define REG_LORA_CONFIG_1   0x1D
+#define REG_FIFO_ADDR_PTR   0x0D
+#define REG_FIFO_TX_BASE    0x0E
+#define REG_FIFO_RX_BASE    0x0F
+#define REG_FIFO_RX_CURRENT_ADDR 0x10
+#define REG_IRQ_FLAGS       0x12
+#define REG_DIO_MAPPING_1   0x40
+#define REG_MODEM_CONFIG_1  0x1D
+#define REG_IRQ_FLAGS       0x12
+
+
+#define RFM95_NSS_GPIO_Port     GPIOB
+#define RFM95_NSS_Pin           GPIO_PIN_0
+
+//#define RFM95_NRST_GPIO_Port    GPIOB
+//#define RFM95_NRST_Pin          GPIO_PIN_1
+
+#define RFM95_DIO0_Pin          GPIO_PIN_10
+#define RFM95_DIO0_Port         GPIOA
+
+#define RFM95_DIO1_Pin          GPIO_PIN_9
+#define RFM95_DIO1_Port         GPIOA
+
+#define RFM95_DIO5_Pin          GPIO_PIN_8
+#define RFM95_DIO5_Port         GPIOA
+
+
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
 
-// Forward declaration of the frame counter functions.
-static bool reload_config(rfm95_eeprom_config_t *config);
-static void save_config(const rfm95_eeprom_config_t *config);
 
-// Create the handle for the RFM95 module.
-rfm95_handle_t rfm95_handle = {
-    // ... see example above
-    .reload_config = reload_config,
-    .save_config = save_config,
-};
-
-// Create the EEPROM handle.
-eeprom_handle_t eeprom_handle = {
-    .i2c_handle = &hi2c1,
-    .device_address = EEPROM_24LC32A_ADDRESS,
-    .max_address = EEPROM_24LC32A_MAX_ADDRESS,
-    .page_size = EEPROM_24LC32A_PAGE_SIZE
-};
-
-static bool reload_config(rfm95_eeprom_config_t *config)
-{
-    return eeprom_read_bytes(&eeprom_handle, 0x0000, (uint8_t*)config, sizeof(rfm95_eeprom_config_t));
-}
-
-static void save_config(const rfm95_eeprom_config_t *config)
-{
-    eeprom_write_bytes(&eeprom_handle, 0x0000, (uint8_t*)config, sizeof(rfm95_eeprom_config_t));
-}
-
-
-// Forward declaration of the functions.
-static uint32_t get_precision_tick();
-static void precision_sleep_until(uint32_t target_ticks);
-static uint8_t random_int(uint8_t max);
-static uint8_t get_battery_level();
-
-// Create the handle for the RFM95 module.
-rfm95_handle_t rfm95_handle = {
-    // ... see example above
-    .precision_tick_frequency = 32768,
-    .precision_tick_drift_ns_per_s = 5000,
-    .receive_mode = RFM95_RECEIVE_MODE_RX12,
-    .get_precision_tick = get_precision_tick,
-    .precision_sleep_until = precision_sleep_until,
-    .random_int = random_int,
-    .get_battery_level = get_battery_level
-};
-
-volatile uint32_t lptim_tick_msb = 0;
-
-static uint32_t get_precision_tick()
-{
-    __disable_irq();
-    uint32_t precision_tick = lptim_tick_msb | HAL_LPTIM_ReadCounter(&hlptim1);
-    __enable_irq();
-    return precision_tick;
-}
-
-void HAL_LPTIM_AutoReloadMatchCallback(LPTIM_HandleTypeDef *hlptim)
-{
-    lptim_tick_msb += 0x10000;
-}
-
-static void precision_sleep_until(uint32_t target_ticks)
-{
-    while (true) {
-
-    uint32_t start_ticks = get_precision_tick();
-    if (start_ticks > target_ticks) {
-        break;
-    }
-
-    uint32_t ticks_to_sleep = target_ticks - start_ticks;
-
-    // Only use sleep for at least 10 ticks.
-    if (ticks_to_sleep >= 10) {
-
-        // Calculate required value of compare register for the sleep minus a small buffer time to compensate
-        // for any ticks that occur while we perform this calculation.
-        uint32_t compare = (start_ticks & 0xffff) + ticks_to_sleep - 2;
-
-        // If the counter auto-reloads we will be woken up anyway.
-        if (compare > 0xffff) {
-            HAL_SuspendTick();
-            HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
-            HAL_ResumeTick();
-
-        // Otherwise, set compare register and use the compare match interrupt to wake up in time.
-        } else {
-            __HAL_LPTIM_COMPARE_SET(&hlptim1, compare);
-            while (!__HAL_LPTIM_GET_FLAG(&hlptim1, LPTIM_FLAG_CMPOK));
-            __HAL_LPTIM_CLEAR_FLAG(&hlptim1, LPTIM_FLAG_CMPM);
-            __HAL_LPTIM_ENABLE_IT(&hlptim1, LPTIM_IT_CMPM);
-            HAL_SuspendTick();
-            HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
-            HAL_ResumeTick();
-            __HAL_LPTIM_DISABLE_IT(&hlptim1, LPTIM_IT_CMPM);
-        }
-    } else {
-        break;
-    }
-
-    // Busy wait until we have reached the target.
-    while (get_precision_tick() < target_ticks);
-}
-
-static uint8_t random_int(uint8_t max)
-{
-    return 0; // Use ADC other means of obtaining a random number.
-}
-
-static uint8_t get_battery_level()
-{
-    return 0xff; // 0xff = Unknown battery level.
-}
 
 /* USER CODE END Includes */
 
@@ -158,10 +84,11 @@ static uint8_t get_battery_level()
 
 /* Private variables ---------------------------------------------------------*/
 SPI_HandleTypeDef hspi1;
-
 USART_HandleTypeDef husart2;
+USART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+char buffer[100];
 
 /* USER CODE END PV */
 
@@ -169,7 +96,10 @@ USART_HandleTypeDef husart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_Init(void);
+void MX_USART2_UART_Init(void);
 static void MX_SPI1_Init(void);
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -177,64 +107,18 @@ static void MX_SPI1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+
 /* USER CODE END 0 */
 
 /**
   * @brief  The application entry point.
   * @retval int
   */
+
+
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
-
-
-    // Create the handle for the RFM95 module.
-    rfm95_handle_t rfm95_handle = {
-        .spi_handle = &hspi1,
-		.nss_port = RFM95_NSS_GPIO_Port,
-		.nss_pin = RFM95_NSS_Pin,
-		.nrst_port = RFM95_NRST_GPIO_Port,
-		.nrst_pin = RFM95_NRST_Pin,
-		.device_address = {
-            0x00, 0x00, 0x00, 0x00
-        },
-		.application_session_key = {
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        },
-		.network_session_key = {
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        },
-		.receive_mode = RFM95_RECEIVE_MODE_NONE
-    };
-
-    // Initialise RFM95 module.
-    if (!rfm95_init(&rfm95_handle)) {
-        printf("RFM95 init failed\n\r");
-    }
-
-    uint8_t[] data_packet = {
-        0x01, 0x02, 0x03, 0x4
-    };
-
-    if (!rfm95_send_receive_cycle(&rfm95_handle, data_packet, sizeof(data_packet))) {
-        printf("RFM95 send failed\n\r");
-    } else {
-        printf("RFM95 send success\n\r");
-    }
-}
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-    if (GPIO_Pin == RFM95_DIO0_Pin) {
-        rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO0);
-    } else if (GPIO_Pin == RFM95_DIO1_Pin) {
-        rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO1);
-    } else if (GPIO_Pin == RFM95_DIO5_Pin) {
-        rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO5);
-    }
-}
-
 
 
   /* USER CODE END 1 */
@@ -258,8 +142,62 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_Init();
+  //MX_USART2_UART_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
+
+  rfm95_handle_t rfm95_handle = {
+    	        .spi_handle = &hspi1,
+    			.nss_port = RFM95_NSS_GPIO_Port,
+    			.nss_pin = RFM95_NSS_Pin,
+    			//.nrst_port = RFM95_NRST_GPIO_Port,
+    			//.nrst_pin = RFM95_NRST_Pin,
+    			.device_address = {
+    	            0x00, 0x00, 0x00, 0x00
+    	        },
+    			.application_session_key = {
+    	            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    	        },
+    			.network_session_key = {
+    	            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    	        },
+    			.receive_mode = RFM95_RECEIVE_MODE_NONE
+    	    };
+
+  sprintf(buffer,"Hello World\r\n");
+  HAL_USART_Transmit(&husart2, buffer, strlen(buffer), 1000);
+
+  	    // Initialise RFM95 module.
+  	    if (!rfm95_init(&rfm95_handle)) {
+  	    	sprintf(buffer,"Initialized\r\n");
+  	    	HAL_USART_Transmit(&husart2, buffer, strlen(buffer), 1000);
+  	       // printf("RFM95 init failed\n\r");
+  	    }
+  	    uint8_t data_packet[] = {0x01, 0x02, 0x03, 0x04};
+
+  	    if (!rfm95_send_receive_cycle(&rfm95_handle, data_packet, sizeof(data_packet))) {
+  	    	sprintf(buffer,"RFM95 send failed\r\n");
+  	    	HAL_USART_Transmit(&husart2, buffer, 100, 10);
+  	        //printf("RFM95 send failed\n\r");
+  	    } else {
+  	       //printf("RFM95 send success\n\r");
+  	      sprintf(buffer,"RFM95 send success\r\n");
+  	      HAL_USART_Transmit(&husart2, buffer, 100, 10);
+  	    }
+
+          // Wait for the acknowledgment packet
+  	    /*
+  	     *uint8_t acknowledgment_packet[sizeof(data_packet)];
+          if (!rfm95_send_receive_cycle(&rfm95_handle, acknowledgment_packet, sizeof(acknowledgment_packet))) {
+              printf("RFM95 acknowledgment receive failed\n\r");
+          } else {
+              printf("RFM95 acknowledgment received\n\r");
+              // Print the acknowledgment packet
+              printf("Ack Packet: ");
+              for (int i = 0; i < sizeof(acknowledgment_packet); i++) {
+                  printf("%02X ", acknowledgment_packet[i]);
+              }
+              printf("\n\r");*/
 
   /* USER CODE END 2 */
 
@@ -269,10 +207,29 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   {
     /* USER CODE END WHILE */
 
+
+
+
+
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
+/*
+        void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+        {
+            if (GPIO_Pin == RFM95_DIO0_Pin) {
+                rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO0);
+            } else if (GPIO_Pin == RFM95_DIO1_Pin) {
+                rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO1);
+            } else if (GPIO_Pin == RFM95_DIO5_Pin) {
+                rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO5);
+            }
+        }
+*/
+
+
 
 /**
   * @brief System Clock Configuration
@@ -462,6 +419,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
+
 
 #ifdef  USE_FULL_ASSERT
 /**
