@@ -97,18 +97,9 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
-	  //Setting DONE PIN HIGH
+	  //Setting Done pin HIGH
 	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
-	  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
 
-	  HAL_Delay(6000);
-
-	  //Setting DONE PIN LOW
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
-	  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
-
-	  HAL_Delay(10000);
 
     /* USER CODE BEGIN 3 */
   }

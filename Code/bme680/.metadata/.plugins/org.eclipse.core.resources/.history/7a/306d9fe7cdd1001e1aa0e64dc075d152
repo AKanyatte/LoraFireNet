@@ -98,17 +98,6 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-	  //Setting DONE PIN HIGH
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
-	  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
-
-	  HAL_Delay(6000);
-
-	  //Setting DONE PIN LOW
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
-	  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
-
-	  HAL_Delay(10000);
 
     /* USER CODE BEGIN 3 */
   }
@@ -247,6 +236,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(LD3_GPIO_Port, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  // Set initial state (LOW or HIGH, depending on TPL5111 requirements)
+  HAL_GPIO_WritePin(TPL5111_DONE_PORT, TPL5111_DONE_PIN, GPIO_PIN_RESET);
 
 /* USER CODE END MX_GPIO_Init_2 */
 }
