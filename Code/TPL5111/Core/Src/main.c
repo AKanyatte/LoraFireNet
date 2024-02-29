@@ -98,17 +98,24 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
+	  //SLEEP MODE
+
+	  //Setting DONE PIN LOW
+
+	  HAL_Delay(10000);
+
+	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+
+	  //WAKE MODE
+
 	  //Setting DONE PIN HIGH
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
-	  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
+	  //COMPLETED TASK
 
 	  HAL_Delay(6000);
 
-	  //Setting DONE PIN LOW
 	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
 	  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
-
-	  HAL_Delay(10000);
 
     /* USER CODE BEGIN 3 */
   }

@@ -880,3 +880,37 @@
 2024-02-22 15:15:51,387 [INFO] ApiDb:452 - User favorites MCUs=[]
 2024-02-22 15:15:51,389 [INFO] ApiDb:448 - Save user favorites file C:\Users\salma/.stm32cubeide/favorites.boards.txt: 0 item(s)
 2024-02-22 15:15:51,390 [INFO] ApiDb:452 - User favorites Boards=[]
+2024-02-22 15:52:54,501 [INFO] Gpio:277 - dependency for GPIO [RCC, SYS, USART2]
+2024-02-22 15:53:03,227 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 852892552 Bytes (1073741824)
+2024-02-22 15:53:05,385 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 871108672 Bytes (1073741824)
+2024-02-22 15:53:10,179 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 649652016 Bytes (1073741824)
+2024-02-22 15:53:11,029 [INFO] BlockDiagram:2759 - set Specific Code input for plugin: NVIC
+2024-02-22 15:53:11,030 [INFO] BlockDiagram:2759 - set Specific Code input for plugin: USART
+2024-02-22 15:53:11,030 [INFO] BlockDiagram:2759 - set Specific Code input for plugin: SYS
+2024-02-22 15:53:11,030 [INFO] BlockDiagram:2759 - set Specific Code input for plugin: GPIO
+2024-02-22 15:53:11,030 [INFO] BlockDiagram:2759 - set Specific Code input for plugin: RCC
+2024-02-22 15:53:11,031 [INFO] CodeGenerator:807 - code generatio: config db path: C:\ST\STM32CubeIDE_1.14.0\STM32CubeIDE\plugins\com.st.stm32cube.common.mx_6.10.0.202311202037\\db\
+2024-02-22 15:53:11,239 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\MXTmpFiles\license.tmp_save
+2024-02-22 15:53:11,493 [INFO] CodeEngine:279 - Generated code: C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\MXTmpFiles\license.tmp
+2024-02-22 15:53:11,574 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\MXTmpFiles\gpio.tmp_save
+2024-02-22 15:53:11,819 [INFO] CodeEngine:279 - Generated code: C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\MXTmpFiles\gpio.tmp
+2024-02-22 15:53:12,027 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\Core\Src\stm32l4xx_it.c_save
+2024-02-22 15:53:12,546 [INFO] CodeEngine:279 - Generated code: C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\Core\Src\stm32l4xx_it.c
+2024-02-22 15:53:12,574 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\Core\Inc\stm32l4xx_it.h_save
+2024-02-22 15:53:12,709 [INFO] CodeEngine:279 - Generated code: C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\Core\Inc\stm32l4xx_it.h
+2024-02-22 15:53:12,762 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\Core\Src\stm32l4xx_hal_msp.c_save
+2024-02-22 15:53:12,965 [INFO] CodeEngine:279 - Generated code: C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\Core\Src\stm32l4xx_hal_msp.c
+2024-02-22 15:53:12,986 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\MXTmpFiles\system.tmp_save
+2024-02-22 15:53:13,098 [INFO] CodeEngine:279 - Generated code: C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\MXTmpFiles\system.tmp
+2024-02-22 15:53:13,138 [INFO] CodeEngine:311 - oldGeneratedFile, C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\Core\Inc\stm32l4xx_hal_conf.h_save
+2024-02-22 15:53:13,279 [INFO] CodeEngine:335 - Generated code: C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\Core\Inc\stm32l4xx_hal_conf.h
+2024-02-22 15:53:13,349 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\Core\Inc\main.h_save
+2024-02-22 15:53:13,498 [INFO] CodeEngine:279 - Generated code: C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\Core\Inc\main.h
+2024-02-22 15:53:13,532 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\Core\Src\main.c_save
+2024-02-22 15:53:13,744 [INFO] CodeEngine:279 - Generated code: C:\Users\salma\OneDrive\Desktop\Capstone\Code\TPL5111\Core\Src\main.c
+2024-02-22 15:53:14,794 [INFO] ProjectBuilder:3076 - Time for Copy HAL[1] : 414mS.
+2024-02-22 15:53:14,801 [INFO] ProjectBuilder:4485 - Project Generator version: 4.2.0-B44
+2024-02-22 15:53:15,266 [INFO] ConfigFileManager:1495 - The Die is : DIE435
+2024-02-22 15:53:17,650 [INFO] ProjectBuilder:4747 - Time for Generating toolchain IDE Files: 2847mS.
+2024-02-22 15:53:17,651 [INFO] ProjectBuilder:2947 - Time for Copy CMSIS : 1mS.
+2024-02-22 15:53:17,655 [INFO] ProjectBuilder:2947 - Time for Copy CMSIS : 1mS.
