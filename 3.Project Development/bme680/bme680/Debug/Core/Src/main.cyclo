@@ -1,0 +1,9 @@
+../Core/Src/main.c:91:5:main	3
+../Core/Src/main.c:227:6:SystemClock_Config	4
+../Core/Src/main.c:288:13:MX_ADC1_Init	3
+../Core/Src/main.c:346:13:MX_I2C1_Init	4
+../Core/Src/main.c:394:13:MX_USART2_Init	2
+../Core/Src/main.c:428:13:MX_GPIO_Init	1
+../Core/Src/main.c:467:8:bme680I2cRead	3
+../Core/Src/main.c:482:8:bme680I2cWrite	2
+../Core/Src/main.c:510:6:Error_Handler	1

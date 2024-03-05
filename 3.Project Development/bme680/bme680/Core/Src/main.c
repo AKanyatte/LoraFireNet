@@ -26,7 +26,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+<<<<<<< HEAD
 #include <math.h>
+=======
+>>>>>>> 2e8d2a8c9cc3a8c2cc14283314b2bf903d9d01cd
 
 /* USER CODE END Includes */
 
@@ -61,8 +64,13 @@ char i2c_reading_buf[100];
 int8_t rslt = BME680_OK;
 //uint8_t tx_buffer[27] = "Putty is Working!\n\r";
 
+<<<<<<< HEAD
 uint16_t adcVal;
 char msg[150];
+=======
+uint16_t ppm;
+char msg[50];
+>>>>>>> 2e8d2a8c9cc3a8c2cc14283314b2bf903d9d01cd
 
 /* USER CODE END PV */
 
@@ -177,19 +185,28 @@ int main(void)
 	  rslt = bme680_get_sensor_data(&data, &gas_sensor);
 
 	  // Format results into a human readable string
+<<<<<<< HEAD
 	  //sprintf(msg, "   T   |   H   |   C\r\n", 10);
 	  //HAL_USART_Transmit(&husart2, msg, 27, 10);
 
 
 	  sprintf(i2c_reading_buf,
 	    "%u.%u",
+=======
+	  sprintf(i2c_reading_buf,
+	    "T: %u.%u degC\r\n",
+>>>>>>> 2e8d2a8c9cc3a8c2cc14283314b2bf903d9d01cd
 	    (unsigned int)data.temperature / 100,
 	    (unsigned int)data.temperature % 100);
 
 	  HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
 
 	  sprintf(i2c_reading_buf,
+<<<<<<< HEAD
 	    "	%u.%u",
+=======
+	    "H: %u.%u %%rH\r\n",
+>>>>>>> 2e8d2a8c9cc3a8c2cc14283314b2bf903d9d01cd
 	    (unsigned int)data.humidity / 1000,
 	    (unsigned int)data.humidity % 1000);
 
@@ -202,6 +219,7 @@ int main(void)
 	  //Get ADC value
 	  HAL_ADC_Start(&hadc1);
 	  HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+<<<<<<< HEAD
 	  float analogVal = 0;
 	  float rs_gas, r0, ratio;
 
@@ -252,12 +270,23 @@ int main(void)
 
 	  //sprintf(msg, "Concentration: %f \r\n", mgL);
 	  //HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(msg), 100);
+=======
+	  ppm = HAL_ADC_GetValue(&hadc1);
+
+	  sprintf(msg, "%hu\r\n", ppm);
+
+	  HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(ppm), HAL_MAX_DELAY);
+>>>>>>> 2e8d2a8c9cc3a8c2cc14283314b2bf903d9d01cd
 
 	  //Test: Set GPIO Pin low
 	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
 	  // Wait between samples
+<<<<<<< HEAD
 	  HAL_Delay(10000);
+=======
+	  HAL_Delay(DELAY_PERIOD_MS);
+>>>>>>> 2e8d2a8c9cc3a8c2cc14283314b2bf903d9d01cd
 
 
 

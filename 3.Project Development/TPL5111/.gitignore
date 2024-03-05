@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #settings
 .settings/
 
@@ -50,3 +51,57 @@ release
 *.su
 *.idb
 *.pdb
+=======
+#settings
+.settings/
+
+#metadata
+.metadata/
+
+#Debug
+Debug/
+debug/
+Release/
+release
+
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+*.bin
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+>>>>>>> 2e8d2a8c9cc3a8c2cc14283314b2bf903d9d01cd
