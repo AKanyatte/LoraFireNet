@@ -155,6 +155,10 @@ int main(void)
 		//lora_send_packet(&lora, test1_var, 4);
 		//HAL_Delay(1000);
 
+		  uint8_t state = read(&lora, 0x12);
+		  sprintf(instruct, "%x", state);
+		  HAL_USART_Transmit(&husart2, instruct, strlen(instruct), 100);
+
 		uint8_t packet_avail = lora_is_transmitting(&lora);
 			if (packet_avail == 0)
 			{

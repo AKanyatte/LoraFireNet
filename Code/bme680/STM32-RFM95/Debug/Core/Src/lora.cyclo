@@ -40,3 +40,4 @@
 ../Core/Src/lora.c:670:6:lora_clear_interrupt_tx_done	1
 ../Core/Src/lora.c:675:6:lora_clear_interrupt_rx_all	1
 ../Core/Src/lora.c:681:9:lora_init	2
+../Core/Src/lora.c:727:9:read	1
