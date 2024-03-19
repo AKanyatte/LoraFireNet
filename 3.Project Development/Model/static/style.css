@@ -1,0 +1,48 @@
+body {
+    font-family: 'Quicksand', sans-serif;
+    background-color: white; /* Set main background color to white */
+    color: black; /* Set text color to black */
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+    background-color: lightblue; /* Set container background color to light blue */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add box shadow for depth effect */
+}
+
+.prediction-container {
+    width: 80%;
+    margin: auto;    
+    padding: 20px;
+    background-color: lightblue; /* Set prediction container background color to a lighter blue */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add box shadow for depth effect */
+}
+
+.heading, .text-center {
+    text-align: center;
+    font-size: 36px;
+    color: black; /* Set heading text color to black */
+}
+
+.tagline {
+    text-align: center;
+    font-size: 24px;
+    color: black; /* Set tagline text color to black */
+}
+
+.sensor-data {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.sensor-data p {
+    margin: 0;
+}
+
+
+/* #ADD8E6, LightSkyBlue, lightblue,powderblue,aliceblue*/

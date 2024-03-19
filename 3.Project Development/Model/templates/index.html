@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forest Fire Prediction</title>
+    <link rel="stylesheet" type="text/css" href="./static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1 class="heading" id="heading">Wildfire Prediction🔥</h1>
+    <h3 class="tagline" id="tagline">Protecting our forests!</h3>
+    <h1 class="text-center">Last Sensor Data</h1>
+        <div class="container" id="container">
+            <div class="sensor-data">
+                <p>Humidity (%):</p>
+                <p>{{ humidity }}</p>
+            </div>
+            <div class="sensor-data">
+                <p>Smoke (ppm):</p>
+                <p>{{ smoke }}</p>
+            </div>
+            <div class="sensor-data">
+                <p>Temperature (°C):</p>
+                <p>{{ temperature }}</p>
+            </div>
+        </div>
+        <h1 class="text-center">Prediction</h1>
+        <div class="prediction-container">
+            <p>Predicted Probability of Fire Occurrence: {{ prediction }}</p>
+        </div>
+</body>
+</html>
