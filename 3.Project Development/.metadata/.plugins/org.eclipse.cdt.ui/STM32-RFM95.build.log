@@ -1,0 +1,10 @@
+21:03:40 **** Incremental Build of configuration Debug for project STM32-RFM95 ****
+make -j8 all 
+arm-none-eabi-size  STM32-RFM95.elf 
+   text	   data	    bss	    dec	    hex	filename
+  21520	    104	   2136	  23760	   5cd0	STM32-RFM95.elf
+Finished building: default.size.stdout
+ 
+
+21:03:40 Build Finished. 0 errors, 0 warnings. (took 453ms)
+
