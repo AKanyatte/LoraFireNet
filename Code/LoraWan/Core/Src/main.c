@@ -24,6 +24,8 @@
 #include "board.h"
 #include "board-gpio.h"
 #include "lorawan.h"
+#include <string.h>
+#include <stdbool.h>
 
 /* USER CODE END Includes */
 
@@ -51,6 +53,10 @@ USART_HandleTypeDef husart2;
 
 /* USER CODE BEGIN PV */
 static Gpio_t led1;
+static uint32_t count = 0;
+uint8_t data[3];
+uint8_t rx_data[3];
+char msg[200];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -68,7 +74,7 @@ static void keyCallback(void);
 static void keyCallback(void){
     GpioToggle(&led1);
 }
-static Gpio_t key;
+//static Gpio_t key;
 DioIrqHandler *keyHandler = keyCallback;
 /* USER CODE END 0 */
 
@@ -105,16 +111,19 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 
-  	 GpioInit(&led1, PB_3, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
-  	 GpioWrite(&led1, 1);
-  	 //GpioInit( &key, PB_7, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
-  	 //GpioSetInterrupt( &key, IRQ_FALLING_EDGE, IRQ_HIGH_PRIORITY, keyHandler );
-  	 Board_Init();
-  	 uint32_t t = Board_Timer_Test(2000);
-  	 if((t>2000 && t-2000<5)||(t<2000 && 2000-t<5)||(t==2000))
-  	 {
-  	  GpioWrite(&led1, 0);
-  	 }
+  GpioInit(&led1, PB_3, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0);
+  GpioWrite(&led1, 1);
+  //GpioInit( &key, PB_7, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+  //GpioSetInterrupt( &key, IRQ_FALLING_EDGE, IRQ_HIGH_PRIORITY, keyHandler );
+  Board_Init();
+  uint32_t t = Board_Timer_Test(2000);
+  if((t>2000 && t-2000<5)||(t<2000 && 2000-t<5)||(t==2000))
+  {
+	  GpioWrite(&led1, 0);
+  }
+
+  LoraWAN_Init();
+
 
   /* USER CODE END 2 */
 
@@ -122,6 +131,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  LoraWAN_Loop();
+	  //SX1276ReadFifo(data, 3);
+	  //snprintf(msg, sizeof(msg), "From fifo: %x \r\n", *data);
+	  //HAL_USART_Transmit(&husart2, (uint8_t*)msg, strlen(msg), 200);
+	  //HAL_Delay(1000);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -367,12 +382,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(LORA_D3_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PB7 */
-  GPIO_InitStruct.Pin = GPIO_PIN_7;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */

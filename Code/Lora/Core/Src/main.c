@@ -34,8 +34,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-//#define TX
-#define RX
+#define TX
+//#define RX
 
 /* USER CODE END PD */
 
@@ -106,8 +106,8 @@ int main(void)
   MX_USART2_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-  //lora_pins.dio0.port  = LORA_DIO0_PORT;
-  	//lora_pins.dio0.pin   = LORA_DIO0_PIN;
+  	lora_pins.dio0.port  = LORA_DIO0_PORT;
+  	lora_pins.dio0.pin   = LORA_DIO0_PIN;
   	lora_pins.nss.port   = LORA_SS_PORT;				// NSS pin to which port is connected
   	lora_pins.nss.pin    = LORA_SS_PIN;					// NSS pin to which pin is connected
   	lora_pins.reset.port = LORA_RESET_PORT;			// RESET pin to which port is connected
@@ -115,10 +115,8 @@ int main(void)
   	lora_pins.spi  			 = &hspi1;
 
   	lora.pin = &lora_pins;
-  	lora.frequency = FREQ_914MHZ;								// 433MHZ Frequency
-  	//lora.frequency = FREQ_865MHZ;								// 865MHZ Frequency
-  	//lora.frequency = FREQ_866MHZ;								// 866MHZ Frequency
-  	//lora.frequency = FREQ_867MHZ;
+  	lora.frequency = FREQ_914MHZ;								// 914 MHZ Frequency
+
 
   	sprintf(msg,"Configuring LoRa module\r\n");
   	HAL_USART_Transmit(&husart2,(uint8_t *)msg,strlen(msg),1000);
@@ -133,7 +131,6 @@ int main(void)
 
 	#ifdef TX
 	uint16_t count =0;
-	//sprintf(buf,"Vinod Embedded");
 	sprintf(buf,"Data: %d, %d, %d", temp, rh, co);
 	#else
 	uint8_t ret;
@@ -168,7 +165,6 @@ int main(void)
 		#endif
 
     /* USER CODE END WHILE */
-
 
     /* USER CODE BEGIN 3 */
   }
@@ -262,7 +258,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-  hspi1.Init.CRCPolynomial = 10;
+  hspi1.Init.CRCPolynomial = 7;
   hspi1.Init.CRCLength = SPI_CRC_LENGTH_DATASIZE;
   hspi1.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
   if (HAL_SPI_Init(&hspi1) != HAL_OK)
@@ -328,10 +324,11 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
 
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1|LD3_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PA3 PA8 */
-  GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_8;
+  /*Configure GPIO pins : PA3 PA8 PA11 */
+  GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_8|GPIO_PIN_11;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);

@@ -10,8 +10,12 @@
 #include <stdio.h>
 #include <string.h>
 #include "board.h"
+#include "main.h"
 
 #include "LoRaMac.h"
+
+extern USART_HandleTypeDef husart2;
+char mesg[200];
 
 static uint8_t DevEui[] = LORAWAN_DEVICE_EUI;
 static uint8_t AppEui[] = LORAWAN_APPLICATION_EUI;
@@ -227,12 +231,15 @@ static void OnTxNextPacketTimerEvent(void) {
  * \param   [IN] mcpsConfirm - Pointer to the confirm structure,
  *               containing confirm attributes.
  */
-static void McpsConfirm(McpsConfirm_t *mcpsConfirm) {
+static void mcpsConfirm(McpsConfirm_t *mcpsConfirm) {
 	if (mcpsConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK) {
 		switch (mcpsConfirm->McpsRequest) {
 		case MCPS_UNCONFIRMED: {
 			// Check Datarate
 			// Check TxPower
+			snprintf(mesg, sizeof(mesg), "MCPS Unconfirmed Datarate: %d, TxPower:%d\r\n", mcpsConfirm->Datarate, mcpsConfirm->TxPower);
+			HAL_USART_Transmit(&husart2, (uint8_t*)mesg, strlen(mesg), 200);
+			HAL_Delay(500);
 			break;
 		}
 		case MCPS_CONFIRMED: {
@@ -240,9 +247,19 @@ static void McpsConfirm(McpsConfirm_t *mcpsConfirm) {
 			// Check TxPower
 			// Check AckReceived
 			// Check NbTrials
+			snprintf(mesg, sizeof(mesg), "MCPS Confirmed AckReceived:%d, NbRetries:%d\r\n",
+					mcpsConfirm->Datarate,
+					mcpsConfirm->TxPower,
+					mcpsConfirm->AckReceived,
+					mcpsConfirm->NbRetries);
+			HAL_USART_Transmit(&husart2, (uint8_t*)mesg, strlen(mesg), 200);
+			HAL_Delay(500);
 			break;
 		}
 		case MCPS_PROPRIETARY: {
+			snprintf(mesg, sizeof(mesg), "MCPS Proprietary\r\n");
+			HAL_USART_Transmit(&husart2, (uint8_t*)mesg, strlen(mesg), 200);
+			HAL_Delay(500);
 			break;
 		}
 		default:
@@ -290,6 +307,31 @@ static void McpsIndication(McpsIndication_t *mcpsIndication) {
 	// Check Rssi
 	// Check Snr
 	// Check RxSlot
+
+	snprintf(mesg, sizeof(mesg), "Check Multicast: %d\r\n", mcpsIndication->Multicast);
+	HAL_USART_Transmit(&husart2, (uint8_t*)mesg, strlen(mesg), 200);
+	HAL_Delay(500);
+	snprintf(mesg, sizeof(mesg), "Check Port: %d\r\n", mcpsIndication->Port);
+	HAL_USART_Transmit(&husart2, (uint8_t*)mesg, strlen(mesg), 200);
+	HAL_Delay(500);
+	snprintf(mesg, sizeof(mesg), "Check RxDataRate: %d\r\n", mcpsIndication->RxDatarate);
+	HAL_USART_Transmit(&husart2, (uint8_t*)mesg, strlen(mesg), 200);
+	HAL_Delay(500);
+	snprintf(mesg, sizeof(mesg), "Check FramePending: %d\r\n", mcpsIndication->FramePending);
+	HAL_USART_Transmit(&husart2, (uint8_t*)mesg, strlen(mesg), 200);
+	HAL_Delay(500);
+	snprintf(mesg, sizeof(mesg), "Check Buffer:\r\n", mcpsIndication->Buffer, mcpsIndication->BufferSize, 'X');
+	HAL_USART_Transmit(&husart2, (uint8_t*)mesg, strlen(mesg), 200);
+	HAL_Delay(500);
+	snprintf(mesg, sizeof(mesg), "Check RSSI: %d\r\n", mcpsIndication->Rssi);
+	HAL_USART_Transmit(&husart2, (uint8_t*)mesg, strlen(mesg), 200);
+	HAL_Delay(500);
+	snprintf(mesg, sizeof(mesg), "Check Snr: %d\r\n", mcpsIndication->Snr);
+	HAL_USART_Transmit(&husart2, (uint8_t*)mesg, strlen(mesg), 200);
+	HAL_Delay(500);
+	snprintf(mesg, sizeof(mesg), "Check RxSlot: %d\r\n", mcpsIndication->RxSlot);
+	HAL_USART_Transmit(&husart2, (uint8_t*)mesg, strlen(mesg), 200);
+	HAL_Delay(500);
 
 	if (mcpsIndication->AckReceived == true) {
 		/*
@@ -461,8 +503,14 @@ static void MlmeConfirm(MlmeConfirm_t *mlmeConfirm) {
 		if (mlmeConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK) {
 			// Status is OK, node has joined the network
 			DeviceState = DEVICE_STATE_SEND;
+			snprintf(mesg, sizeof(mesg), "Status OK, node has joined network\r\n");
+			HAL_USART_Transmit(&husart2, (uint8_t*)mesg, strlen(mesg), 200);
+			HAL_Delay(500);
 		} else {
 			// Join was not successful. Try to join again
+			snprintf(mesg, sizeof(mesg), "Not successful\r\n");
+			HAL_USART_Transmit(&husart2, (uint8_t*)mesg, strlen(mesg), 200);
+			HAL_Delay(500);
 			DeviceState = DEVICE_STATE_JOIN;
 		}
 		break;
@@ -495,7 +543,7 @@ void LoraWAN_Init() {
 void LoraWAN_Loop() {
 	switch (DeviceState) {
 	case DEVICE_STATE_INIT: {
-		LoRaMacPrimitives.MacMcpsConfirm = McpsConfirm;
+		LoRaMacPrimitives.MacMcpsConfirm = mcpsConfirm;
 		LoRaMacPrimitives.MacMcpsIndication = McpsIndication;
 		LoRaMacPrimitives.MacMlmeConfirm = MlmeConfirm;
 		LoRaMacCallbacks.GetBatteryLevel = BoardGetBatteryLevel;
@@ -540,7 +588,6 @@ void LoraWAN_Loop() {
 		/*
 		 * turn on LoRa module here
 		 */
-		HAL_Delay(500);
 #if( OVER_THE_AIR_ACTIVATION != 0 )
 		MlmeReq_t mlmeReq;
 
