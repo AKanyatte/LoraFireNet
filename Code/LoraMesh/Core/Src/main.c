@@ -33,10 +33,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-//#define ADDRESS 0x01  // Address for module 1
-//#define ADDRESS 0x02	//Address for module 2
-#define ADDRESS 0x03	//Address for module 3
-//#define ADDRESS 0x04	//Address for module 4
+//#define ADDRESS 0x01  // Address for gateway
+//#define ADDRESS 0x02	//Address for node 1
+//#define ADDRESS 0x03	//Address for node 2
+#define ADDRESS 0x04	//Address for node 3
 //#define RX
 //#define TX
 /* USER CODE END PD */
@@ -54,7 +54,9 @@ USART_HandleTypeDef husart2;
 /* USER CODE BEGIN PV */
 uint8_t buffer[32];
 uint8_t res;
-uint8_t tx_data[] = {3, 25, 45, 100};
+uint8_t tx_data[] = {1, 25, 45, 100};
+uint8_t tx_data_2[] = {1, 30, 25, 80};
+uint8_t tx_data_3[] = {1, 14, 20, 40};
 uint8_t rx_done = 0;
 uint8_t tx_done = 0;
 char msg[200];
@@ -138,8 +140,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  //send_packet(&lora, tx_data, 4);
-	  lora_mode_receive_continuous(&lora);
+	  //send_packet(&lora, tx_data_2, 4);
+
+	lora_mode_receive_continuous(&lora);
 	  // Wait for packet up to 10sec
 	  uint8_t len = lora_receive_packet_blocking(&lora, buffer, sizeof(buffer), 10000, &res);
 	  if (res != LORA_OK)
@@ -150,6 +153,7 @@ int main(void)
 		  // Handle received packet
 		  handle_received_packet(&lora, buffer, len, ADDRESS);
 	  }
+
 
 	  #ifdef TX
 	  res = lora_send_packet(&lora, tx_data, 4);
@@ -168,7 +172,7 @@ int main(void)
 	  // Put LoRa modem into continuous receive mode
 	  lora_mode_receive_continuous(&lora);
 	  // Wait for packet up to 10sec
-	  len = lora_receive_packet_blocking(&lora, buffer, sizeof(buffer), 10000, &res);
+	  uint8_t len = lora_receive_packet_blocking(&lora, buffer, sizeof(buffer), 10000, &res);
 	  if (res != LORA_OK)
 	  {
 	      // Receive failed
@@ -181,6 +185,17 @@ int main(void)
 		  HAL_USART_Transmit(&husart2, (uint8_t*)msg, strlen(msg), 200);
 		  HAL_Delay(1000);
 	  }
+
+	  uint8_t rssi =  lora_packet_rssi(&lora);
+	  snprintf(msg, sizeof(msg), "RSSI: %d \r\n", rssi);
+	  HAL_USART_Transmit(&husart2, (uint8_t*)msg, strlen(msg), 200);
+	  HAL_Delay(1000);
+
+	  uint8_t snr = lora_packet_snr(&lora);
+	  snprintf(msg, sizeof(msg), "SNR %d \r\n", snr);
+	  HAL_USART_Transmit(&husart2, (uint8_t*)msg, strlen(msg), 200);
+	  HAL_Delay(1000);
+
 	  #endif
 
     /* USER CODE END WHILE */

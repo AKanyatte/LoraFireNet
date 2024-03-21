@@ -13,20 +13,19 @@ extern USART_HandleTypeDef husart2;
 #define MAX_ADDRESS 4 // Maximum number of modules
 #define MAX_PACKET_SIZE 64 // Maximum packet size
 
-
 // Define addresses for each module
-#define MODULE_1_ADDRESS 0x01
-#define MODULE_2_ADDRESS 0x02
-#define MODULE_3_ADDRESS 0x03
-#define MODULE_4_ADDRESS 0x04
-#define NO_NEXT_HOP		 0x00
+#define GATEWAY_ADDRESS		0x01
+#define NODE_1_ADDRESS		0x02
+#define NODE_2_ADDRESS		0x03
+#define NODE_3_ADDRESS		0x04
+#define NO_NEXT_HOP			0x00
 
 
-// Function to check if the packet is intended for this module
+/** Checks if the packet is intended for this module
+ */
 bool is_packet_for_this_module(uint8_t dest_address, uint8_t my_address)
 {
     // Extract destination address from the packet
-   // uint8_t dest_address = payload[0]; // First byte is the destination address
     // Compare with the address of this module
     if(dest_address == my_address)
     {
@@ -38,39 +37,41 @@ bool is_packet_for_this_module(uint8_t dest_address, uint8_t my_address)
     }
 }
 
-// Function to determine the next hop based on the destination address
-uint8_t determine_next_hop(uint8_t *payload)
+
+/** Determine the next hop based on the destination address and mesh configuration
+ */
+uint8_t determine_next_hop(uint8_t *payload, uint8_t my_address)
 {
     // Extract destination address from the packet
-    uint8_t dest_address = payload[0]; // Assuming the first byte is the destination address
+    uint8_t dest_address = payload[0];
 
-    // Simple routing: Forward packet to next module
-    if (dest_address == MODULE_1_ADDRESS)
-    {
-        return MODULE_2_ADDRESS;
-    }
-    else if (dest_address == MODULE_2_ADDRESS)
-    {
-        return MODULE_3_ADDRESS;
-    }
-    else if (dest_address == MODULE_3_ADDRESS)
-    {
-    	return MODULE_2_ADDRESS;
-    }
-    else
-    {
-        // No next hop, packet should be discarded
+    // Mesh routing configuration
+    if (my_address == GATEWAY_ADDRESS) {
+        // If this node is the master node, route all packets to itself
+        return GATEWAY_ADDRESS; }
+    else if (my_address == NODE_2_ADDRESS) {
+        // If this node is node 2, route packets to node 3
+        return NODE_3_ADDRESS; }
+    else if((my_address == NODE_1_ADDRESS) || (my_address == NODE_3_ADDRESS)){
+        // For nodes 1 and 3, route packets to the master node
+        return GATEWAY_ADDRESS; }
+    else {
+    	 // No next hop, packet should be discarded
     	return NO_NEXT_HOP;
     }
 }
 
-// Function to transmit the packet to the next hop module
+
+/** Transmit packet to the next hop
+ */
 void transmit_packet_to_next_hop(lora_sx1276 *lora, uint8_t *payload, uint8_t len, uint8_t next_hop)
 {
     lora_send_packet(lora, payload, len);
 }
 
 
+/** Handles the received packet
+ */
 void handle_received_packet(lora_sx1276 *lora, uint8_t *payload, uint8_t len, uint8_t address)
 {
 	char message[200];
@@ -83,7 +84,7 @@ void handle_received_packet(lora_sx1276 *lora, uint8_t *payload, uint8_t len, ui
     else
     {
         // Forward the packet to the next hop
-        uint8_t next_hop = determine_next_hop(payload);
+        uint8_t next_hop = determine_next_hop(payload, address);
 
         snprintf(message, sizeof(message),"Packet is being transmitted to next hop: %x\r\n", next_hop);
         HAL_USART_Transmit(&husart2,(uint8_t *)message,strlen(message), 100);
@@ -96,7 +97,8 @@ void handle_received_packet(lora_sx1276 *lora, uint8_t *payload, uint8_t len, ui
     }
 }
 
-// Function to process the received packet
+/** Process the received packet
+ */
 void process_packet(uint8_t *payload, uint8_t len)
 {
 	char packet[200];
@@ -111,20 +113,10 @@ void process_packet(uint8_t *payload, uint8_t len)
     // TODO: Process the received packet into array of sorts?
 }
 
-// Function to get the address of this module
-uint8_t get_module_address()
-{
-    //Each module has a unique address (1 to 4)
-    return 0x01; // Change this value for each module
-}
-
-
-// Function to send a packet
+/** Sends a packet
+ */
 void send_packet(lora_sx1276 *lora, uint8_t *data, uint8_t data_len)
 {
-    //uint8_t buffer[MAX_PACKET_SIZE];
-    //buffer[0] = destination_address; // Set the destination address
-    //memcpy(buffer + 1, data, data_len); // Copy the payload
     // Send packet
 	char message[200];
 	uint8_t res = lora_send_packet(lora, data, data_len);
@@ -141,6 +133,5 @@ void send_packet(lora_sx1276 *lora, uint8_t *data, uint8_t data_len)
 		HAL_USART_Transmit(&husart2,(uint8_t *)message,strlen(message), 100);
 		HAL_Delay(1000);
 	}
-     // Include the destination address
 }
 

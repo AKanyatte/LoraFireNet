@@ -19,7 +19,7 @@
 bool is_packet_for_this_module(uint8_t dest_addr, uint8_t my_address);
 
 // Function to determine the next hop based on the destination address
-uint8_t determine_next_hop(uint8_t *payload);
+uint8_t determine_next_hop(uint8_t *payload, uint8_t my_address);
 
 // Function to transmit the packet to the next hop module
 void transmit_packet_to_next_hop(lora_sx1276 *lora, uint8_t *payload, uint8_t len, uint8_t next_hop);

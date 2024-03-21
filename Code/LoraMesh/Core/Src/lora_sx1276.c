@@ -341,7 +341,7 @@ int8_t lora_packet_rssi(lora_sx1276 *lora)
 
   uint8_t rssi = read_register(lora, REG_PKT_RSSI_VALUE);
 
-  return lora->frequency < (868 * MHZ) ? rssi - 164 : rssi - 157;
+  return lora->frequency < (915 * MHZ) ? rssi - 164 : rssi - 157;
 }
 
 uint8_t lora_packet_snr(lora_sx1276 *lora)
