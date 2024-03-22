@@ -26,16 +26,16 @@ def home():
         last_temperature = entry_data['temperature']
 
     # Convert input data to a NumPy array and reshape it
-    input_data = np.array([[last_humidity, last_smoke, last_temperature]])
+    input_data = np.array([[last_temperature, last_humidity, last_smoke]])
     
     # Perform prediction using the model
-    prediction = model.predict(input_data)
-    predicted_probability = prediction[0][0]  # Assuming it's a binary classification
+    prediction = model.predict(input_data) * 100
+    predicted_probability = prediction[0][0]  
     
     # Pass the retrieved data and prediction result to the HTML template
     return render_template('index.html', humidity=last_humidity, smoke=last_smoke, temperature=last_temperature, prediction=predicted_probability)
 
 
 if __name__ == '__main__':
-    app.run(port=3000, debug=True)
+    app.run(host= "0.0.0.0", port=3000, debug=True)
 
