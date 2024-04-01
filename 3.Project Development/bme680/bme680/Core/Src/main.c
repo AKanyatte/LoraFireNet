@@ -178,11 +178,6 @@ int main(void)
 	  // Query the sample data
 	  rslt = bme680_get_sensor_data(&data, &gas_sensor);
 
-	  // Format results into a human readable string
-
-	  //sprintf(msg, "   T   |   H   |   C\r\n", 10);
-	  //HAL_USART_Transmit(&husart2, msg, 27, 10);
-
 
 	  sprintf(i2c_reading_buf,
 	    "%u.%u",
@@ -200,19 +195,16 @@ int main(void)
 	    (unsigned int)data.humidity % 1000);
 
 	  // Publish result to connected PC
-	  HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);
+	  HAL_USART_Transmit(&husart2, i2c_reading_buf, 27, 10);   // TODO: transmit to LORA
 
 	  //Test: Set GPIO Pin high
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
 
 	  //Get ADC value
 	  HAL_ADC_Start(&hadc1);
 	  HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
 	  float analogVal = 0;
-	  float rs_gas, r0, ratio;
-
-	  //analogVal = HAL_ADC_GetValue(&hadc1);
-
+	
 
 	  for (int i = 0; i < 10; i++)
 	  {
@@ -223,55 +215,25 @@ int main(void)
 	  analogVal = analogVal/10;
 
 
-	  //float value = (analogVal / 50) * (5.0/1024.0);
 	  float value = analogVal / (5.0*1024.0);
 	  rs_gas = (5.0 - value) / value;
-	  //r0 = rs_gas / 60;
 	  r0 = 7.0944;
 	  ratio = rs_gas / r0;
 
 	  float mgL = (-8.414*log(ratio)) + 31.926;
 	  float ppm = ((mgL * 1000 * 24.5) / 28.01) * 0.01;
-	  //float mgL = pow(10, (((log(ratio)-smokeCurve[1])/smokeCurve[2]) + smokeCurve[0]));
+	
 
-	  //sprintf(msg, "R0: %f kOhm\r\n", r0);
-	  //HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(msg), 100);
-
-
-	  //sprintf(msg, "Gas Resistance: %f kOhm\r\n", rs_gas);
-	  //HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(msg), 100);
-
-	  //sprintf(msg, "Ratio: %f\r\n", ratio);
-	  //HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(msg), 100);
-
-	  //sprintf(msg, "ADC: %f\r\n", analogVal);
-	  //HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(msg), 100);
-
-	  //sprintf(msg, "Voltage Value: %f V\r\n", value);
-	  //HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(msg), 100);
-
-	  //sprintf(msg, "Concentration: %f mgL\r\n", mgL);
-	  //HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(msg), 100);
 
 	  sprintf(msg, "	%f\r\n", ppm);
 	  HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(msg), 100);
 
-	  //sprintf(msg, "Concentration: %f \r\n", mgL);
-	  //HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(msg), 100);
-	  ppm = HAL_ADC_GetValue(&hadc1);
-
-	  sprintf(msg, "%hu\r\n", ppm);
-
-	  HAL_USART_Transmit(&husart2, (uint8_t *)msg, strlen(ppm), HAL_MAX_DELAY);
-
 	  //Test: Set GPIO Pin low
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
 
 	  // Wait between samples
 	  HAL_Delay(10000);
 	  HAL_Delay(DELAY_PERIOD_MS);
-
-
 
 	  // Request the next sample
 	  if (gas_sensor.power_mode == BME680_FORCED_MODE) {

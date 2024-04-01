@@ -96,26 +96,23 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // Set done pin low
+	    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+
+	    HAL_GPIO_WritePin(GPIOB, LD3_Pin, GPIO_PIN_SET);
+	    HAL_Delay(5000);
+	    HAL_GPIO_WritePin(GPIOB, LD3_Pin, GPIO_PIN_RESET);
+	    HAL_Delay(5000);
+
+	    //Set done pin high
+	    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+	    /*
+	    HAL_Delay(1);
+	    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+	    HAL_Delay(1);*/
+
     /* USER CODE END WHILE */
 
-	  //SLEEP MODE
-
-	  //Setting DONE PIN LOW
-
-	  HAL_Delay(10000);
-
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
-	  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
-
-	  //WAKE MODE
-
-	  //Setting DONE PIN HIGH
-	  //COMPLETED TASK
-
-	  HAL_Delay(6000);
-
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
-	  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
 
     /* USER CODE BEGIN 3 */
   }
@@ -234,13 +231,13 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|GPIO_PIN_8, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PA1 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1;
+  /*Configure GPIO pins : PA1 PA8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_8;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
