@@ -286,7 +286,7 @@ int main(void)
 
 	  HAL_Delay(10000);
 
-	  // Indicate tsaks is done and cut off power to circuit
+	  // Indicate tasks are done and cut off power to circuit
 	  set_done_high();
 
 	  HAL_Delay(100);
