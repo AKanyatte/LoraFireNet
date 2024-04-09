@@ -44,3 +44,17 @@ body {
     margin: 0;
 }
 
+.alert-container {
+    width: 80%;
+    margin: auto;    
+    padding: 20px;
+    background-color: lightblue; /* Set alert container background color to light blue */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add box shadow for depth effect */
+    margin-top: 20px; /* Add margin to separate from other containers */
+}
+
+.alert-container p {
+    margin: 0;
+    text-align: center; /* Center align the alert message */
+}
