@@ -4,6 +4,8 @@
   * @file           : main.c
   * @brief          : Main program body
   *
+  * Author: Salman Shuaib
+  * 
   * Description:
   * This file contains the main program body for a LoRa-enabled environmental
   * monitoring system using BME680 sensor and an MQ3 gas sensor.
